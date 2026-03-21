@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>GundamBase</title>
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+  <header>
+    <div class="header-inner">
+      <div class="logo">
+        <span class="logo-symbol">⬡</span>
+        <span class="logo-text">GUNDAM<span>BASE</span></span>
+      </div>
+      <div class="header-stats" id="header-stats"></div>
+      <a href="/" class="back-home">← tomcannon.com</a>
+    </div>
+  </header>
+
+  <main>
+    <div class="controls">
+      <div class="filter-tabs" id="grade-tabs">
+        <button class="tab active" data-grade="ALL">All</button>
+        <button class="tab" data-grade="PG">PG</button>
+        <button class="tab" data-grade="MG">MG</button>
+        <button class="tab" data-grade="RG">RG</button>
+        <button class="tab" data-grade="FM">FM</button>
+        <button class="tab" data-grade="HG">HG</button>
+        <button class="tab" data-grade="EG">EG</button>
+        <button class="tab" data-grade="OTHER">Other</button>
+      </div>
+      <div class="status-filters">
+        <button class="status-btn active" data-status="ALL">All</button>
+        <button class="status-btn" data-status="backlog">Backlog</button>
+        <button class="status-btn" data-status="in-progress">In Progress</button>
+        <button class="status-btn" data-status="complete">Complete</button>
+      </div>
+    </div>
+
+    <div id="grade-sections"></div>
+  </main>
+
+  <!-- Model Detail Modal -->
+  <div id="modal-overlay" class="modal-overlay hidden">
+    <div class="modal">
+      <button class="modal-close" id="modal-close">✕</button>
+      <div class="modal-content" id="modal-content"></div>
+    </div>
+  </div>
+
+  <script src="app.js"></script>
+</body>
+</html>

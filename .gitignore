@@ -1,0 +1,6 @@
+node_modules/
+public/uploads/thumbnails/
+public/uploads/builds/
+*.log
+.DS_Store
+Thumbs.db

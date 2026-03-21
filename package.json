@@ -1,0 +1,14 @@
+{
+  "name": "gundam-base",
+  "version": "1.0.0",
+  "description": "Gunpla inventory manager",
+  "main": "server.js",
+  "scripts": {
+    "start": "node server.js",
+    "dev": "npx nodemon server.js"
+  },
+  "dependencies": {
+    "express": "^4.18.2",
+    "multer": "^2.0.0"
+  }
+}
