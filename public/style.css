@@ -65,11 +65,43 @@ header {
 .logo-text span { color: var(--accent); }
 .header-stats {
   display: flex;
-  gap: 1.5rem;
-  font-size: 0.85rem;
-  color: var(--text2);
+  align-items: center;
+  gap: 1px;
+  background: var(--border);
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  overflow: hidden;
 }
-.stat-item strong { color: var(--text); margin-left: 4px; }
+.stat-item {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 6px 20px;
+  background: var(--bg2);
+  gap: 2px;
+}
+.stat-item:first-child {
+  background: var(--bg3);
+  padding: 8px 24px;
+}
+.stat-label {
+  font-size: 0.6rem;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--text3);
+}
+.stat-value {
+  font-size: 1.15rem;
+  font-weight: 700;
+  color: var(--text);
+  line-height: 1;
+}
+.stat-item:first-child .stat-value {
+  font-size: 1.5rem;
+  color: var(--accent);
+}
+.stat-item:nth-child(2) .stat-value { color: var(--green); }
+.stat-item:nth-child(3) .stat-value { color: var(--gold); }
 
 /* ── Main ── */
 main { max-width: 1400px; margin: 0 auto; padding: 2rem; }

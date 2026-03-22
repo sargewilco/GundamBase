@@ -24,9 +24,9 @@ function renderStats() {
   const complete = inventory.filter(m => m.status === 'complete').length;
   const inProgress = inventory.filter(m => m.status === 'in-progress').length;
   document.getElementById('header-stats').innerHTML = `
-    <span class="stat-item">Total<strong>${total}</strong></span>
-    <span class="stat-item">In Progress<strong>${inProgress}</strong></span>
-    <span class="stat-item">Complete<strong>${complete}</strong></span>
+    <div class="stat-item"><span class="stat-value">${total}</span><span class="stat-label">Total Kits</span></div>
+    <div class="stat-item"><span class="stat-value">${inProgress}</span><span class="stat-label">In Progress</span></div>
+    <div class="stat-item"><span class="stat-value">${complete}</span><span class="stat-label">Complete</span></div>
   `;
 }
 
