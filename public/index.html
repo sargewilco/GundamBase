@@ -14,6 +14,7 @@
         <span class="logo-text">GUNDAM<span>BASE</span></span>
       </div>
       <div class="header-stats" id="header-stats"></div>
+      <button class="add-model-btn" id="add-model-btn">+ Add Model</button>
       <a href="/" class="back-home">← tomcannon.com</a>
     </div>
   </header>
@@ -40,6 +41,52 @@
 
     <div id="grade-sections"></div>
   </main>
+
+  <!-- Add Model Modal -->
+  <div id="add-modal-overlay" class="modal-overlay hidden">
+    <div class="modal" style="max-width:520px;">
+      <button class="modal-close" id="add-modal-close">✕</button>
+      <div style="padding:2rem;">
+        <h2 style="font-size:1.1rem;margin-bottom:1.5rem;color:var(--text);">Add New Model</h2>
+        <div class="field-group">
+          <label class="field-label">Grade</label>
+          <select class="status-select" id="add-grade">
+            <option value="PG">PG — Perfect Grade</option>
+            <option value="MG">MG — Master Grade</option>
+            <option value="RG">RG — Real Grade</option>
+            <option value="FM">FM — Full Mechanics</option>
+            <option value="HG" selected>HG — High Grade</option>
+            <option value="EG">EG — Entry Grade</option>
+            <option value="OTHER">Other</option>
+          </select>
+        </div>
+        <div class="field-group">
+          <label class="field-label">Name <span style="color:var(--red)">*</span></label>
+          <input class="notes-input" style="min-height:unset;padding:8px 12px;" id="add-name" placeholder="e.g. RX-78-2 Gundam Ver. 3.0" />
+        </div>
+        <div class="field-group">
+          <label class="field-label">Series <span style="color:var(--red)">*</span></label>
+          <input class="notes-input" style="min-height:unset;padding:8px 12px;" id="add-series" placeholder="e.g. Mobile Suit Gundam" />
+        </div>
+        <div class="field-group">
+          <label class="field-label">Model Number</label>
+          <input class="notes-input" style="min-height:unset;padding:8px 12px;" id="add-model-number" placeholder="e.g. RX-78-2 (optional)" />
+        </div>
+        <div class="field-group">
+          <label class="field-label">Notes</label>
+          <input class="notes-input" style="min-height:unset;padding:8px 12px;" id="add-notes" placeholder="Optional" />
+        </div>
+        <div style="display:flex;gap:10px;align-items:center;margin-top:4px;">
+          <input type="checkbox" id="add-fetch-image" checked />
+          <label for="add-fetch-image" style="font-size:0.82rem;color:var(--text2);cursor:pointer;">Auto-fetch thumbnail from wiki</label>
+        </div>
+        <div style="display:flex;gap:10px;margin-top:1.5rem;">
+          <button class="add-photo-btn" id="add-submit-btn" style="flex:1;">Add to Inventory</button>
+          <button class="upload-btn" id="add-cancel-btn" style="flex:0 0 auto;">Cancel</button>
+        </div>
+      </div>
+    </div>
+  </div>
 
   <!-- Model Detail Modal -->
   <div id="modal-overlay" class="modal-overlay hidden">

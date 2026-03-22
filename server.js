@@ -45,17 +45,49 @@ app.get('/api/inventory', (req, res) => {
   res.json(readInventory());
 });
 
-// PATCH model fields (status, notes)
+// POST add new model
+app.post('/api/inventory', (req, res) => {
+  const { grade, name, series, modelNumber, notes } = req.body;
+  if (!grade || !name || !series) return res.status(400).json({ error: 'grade, name and series are required' });
+  const inventory = readInventory();
+  const id = `${grade.toLowerCase()}-${Date.now()}`;
+  const model = { id, grade, name, series, modelNumber: modelNumber || null, thumbnail: null, status: 'backlog', buildPhotos: [], notes: notes || '' };
+  inventory.push(model);
+  writeInventory(inventory);
+  res.status(201).json(model);
+});
+
+// PATCH model fields
 app.patch('/api/inventory/:id', (req, res) => {
   const inventory = readInventory();
   const idx = inventory.findIndex(m => m.id === req.params.id);
   if (idx === -1) return res.status(404).json({ error: 'Not found' });
-  const allowed = ['status', 'notes', 'name', 'series'];
+  const allowed = ['status', 'notes', 'name', 'series', 'modelNumber'];
   allowed.forEach(key => {
     if (req.body[key] !== undefined) inventory[idx][key] = req.body[key];
   });
   writeInventory(inventory);
   res.json(inventory[idx]);
+});
+
+// DELETE a model
+app.delete('/api/inventory/:id', (req, res) => {
+  const inventory = readInventory();
+  const idx = inventory.findIndex(m => m.id === req.params.id);
+  if (idx === -1) return res.status(404).json({ error: 'Not found' });
+  const model = inventory[idx];
+  // Clean up thumbnail and build photos
+  if (model.thumbnail) {
+    const p = path.join(__dirname, 'public', model.thumbnail);
+    if (fs.existsSync(p)) fs.unlinkSync(p);
+  }
+  model.buildPhotos.forEach(photo => {
+    const p = path.join(__dirname, 'public', photo.path);
+    if (fs.existsSync(p)) fs.unlinkSync(p);
+  });
+  inventory.splice(idx, 1);
+  writeInventory(inventory);
+  res.json({ ok: true });
 });
 
 // POST upload thumbnail or build photo

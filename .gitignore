@@ -1,4 +1,5 @@
 node_modules/
+.claude/
 public/uploads/thumbnails/
 public/uploads/builds/
 *.log

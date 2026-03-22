@@ -1,0 +1,314 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Bitwerks // Device Intel</title>
+  <style>
+    :root {
+      --bg:      #080b10;
+      --surface: #0d1117;
+      --border:  #1e2d40;
+      --accent:  #00d4ff;
+      --green:   #00ff88;
+      --muted:   #7a9ec0;
+      --text:    #c9d8e8;
+      --dim:     #607080;
+    }
+
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      background: var(--bg);
+      color: var(--text);
+      font-family: 'Courier New', Courier, monospace;
+      min-height: 100vh;
+    }
+
+    /* Scanline overlay */
+    body::before {
+      content: '';
+      position: fixed;
+      inset: 0;
+      background: repeating-linear-gradient(
+        0deg,
+        transparent,
+        transparent 2px,
+        rgba(0,212,255,0.015) 2px,
+        rgba(0,212,255,0.015) 4px
+      );
+      pointer-events: none;
+      z-index: 100;
+    }
+
+    header {
+      border-bottom: 1px solid var(--border);
+      padding: 1.5rem 2rem;
+      display: flex;
+      align-items: baseline;
+      gap: 1rem;
+    }
+
+    .logo {
+      font-size: 1.5rem;
+      font-weight: bold;
+      letter-spacing: 0.15em;
+      color: var(--accent);
+      text-shadow: 0 0 20px rgba(0,212,255,0.5);
+    }
+
+    .logo span { color: var(--muted); font-size: 0.9rem; }
+
+    .tagline {
+      font-size: 0.72rem;
+      color: var(--muted);
+      letter-spacing: 0.2em;
+      text-transform: uppercase;
+    }
+
+    main {
+      max-width: 900px;
+      margin: 0 auto;
+      padding: 1.5rem;
+    }
+
+    .section-label {
+      font-size: 0.65rem;
+      letter-spacing: 0.25em;
+      text-transform: uppercase;
+      color: var(--accent);
+      margin-bottom: 1rem;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+    .section-label::after {
+      content: '';
+      flex: 1;
+      height: 1px;
+      background: var(--border);
+    }
+
+    .card-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(380px, 1fr));
+      gap: 1px;
+      background: var(--border);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      overflow: hidden;
+      margin-bottom: 2rem;
+    }
+
+    .card-row {
+      background: var(--surface);
+      padding: 12px 16px;
+      display: grid;
+      grid-template-columns: 140px 1fr;
+      gap: 12px;
+      align-items: start;
+      transition: background 0.1s;
+    }
+    .card-row:hover { background: #111820; }
+
+    .card-key {
+      font-size: 0.72rem;
+      color: var(--muted);
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      padding-top: 2px;
+    }
+
+    .card-value {
+      font-size: 0.82rem;
+      color: var(--green);
+      word-break: break-all;
+      line-height: 1.5;
+    }
+
+    /* ── Mobile ── */
+    @media (max-width: 600px) {
+      header {
+        flex-direction: column;
+        gap: 4px;
+        padding: 1rem;
+      }
+      .logo { font-size: 1.2rem; }
+      main { padding: 1rem; }
+
+      .card-grid {
+        grid-template-columns: 1fr;
+      }
+      .card-row {
+        grid-template-columns: 1fr;
+        gap: 4px;
+        padding: 10px 12px;
+      }
+      .card-key {
+        font-size: 0.65rem;
+        padding-top: 0;
+      }
+      .card-value { font-size: 0.82rem; }
+      .card-value.highlight { font-size: 0.95rem; }
+
+      .reveal-btn {
+        font-size: 0.85rem;
+        padding: 14px 20px;  /* larger tap target */
+      }
+
+      .header-row {
+        grid-template-columns: 1fr;
+        gap: 2px;
+        padding: 8px 12px;
+      }
+      .header-name {
+        font-size: 0.65rem;
+        color: var(--muted);
+      }
+      .header-val { font-size: 0.78rem; }
+    }
+
+    .card-value.null-val { color: var(--muted); font-style: italic; }
+
+    /* Special highlight for IP */
+    .card-value.highlight {
+      color: var(--accent);
+      font-size: 1rem;
+      font-weight: bold;
+      text-shadow: 0 0 12px rgba(0,212,255,0.4);
+    }
+
+    /* Reveal button */
+    .reveal-btn {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      background: transparent;
+      border: 1px solid var(--border);
+      border-radius: 6px;
+      color: var(--muted);
+      font-family: inherit;
+      font-size: 0.78rem;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      padding: 10px 20px;
+      cursor: pointer;
+      margin-bottom: 2rem;
+      transition: all 0.15s;
+      width: 100%;
+      justify-content: center;
+    }
+    .reveal-btn:hover {
+      border-color: var(--accent);
+      color: var(--accent);
+    }
+    .reveal-btn .arrow { transition: transform 0.2s; }
+    .reveal-btn.open .arrow { transform: rotate(180deg); }
+
+    /* All headers panel */
+    .all-headers {
+      display: none;
+      margin-bottom: 2rem;
+    }
+    .all-headers.visible { display: block; }
+
+    .header-row {
+      display: grid;
+      grid-template-columns: 260px 1fr;
+      gap: 12px;
+      padding: 8px 16px;
+      border-bottom: 1px solid var(--border);
+      font-size: 0.78rem;
+      transition: background 0.1s;
+    }
+    .header-row:first-child { border-top: 1px solid var(--border); }
+    .header-row:hover { background: var(--surface); }
+    .header-name { color: var(--muted); }
+    .header-val  { color: var(--text); word-break: break-all; }
+
+    /* Loading state */
+    .loading {
+      color: var(--muted);
+      font-size: 0.8rem;
+      padding: 1rem 0;
+      animation: pulse 1s infinite;
+    }
+    @keyframes pulse { 0%,100%{opacity:1} 50%{opacity:0.4} }
+
+    footer {
+      border-top: 1px solid var(--border);
+      padding: 1rem 2rem;
+      font-size: 0.65rem;
+      color: var(--muted);
+      letter-spacing: 0.1em;
+      text-align: center;
+    }
+  </style>
+</head>
+<body>
+
+<header>
+  <div class="logo">BITWERKS <span>// DEVICE INTEL</span></div>
+  <div class="tagline">HTTP Header Analysis</div>
+</header>
+
+<main>
+  <div class="section-label">Signal Acquired</div>
+  <div class="card-grid" id="key-headers">
+    <div class="loading">Scanning...</div>
+  </div>
+
+  <button class="reveal-btn" id="reveal-btn">
+    <span class="arrow">▼</span>
+    <span class="btn-label">Reveal All Headers</span>
+  </button>
+
+  <div class="all-headers" id="all-headers">
+    <div class="section-label">Full Transmission</div>
+    <div id="all-headers-content"><div class="loading">Loading...</div></div>
+  </div>
+</main>
+
+<footer>BITWERKS.MOBI &mdash; HTTP HEADER DIAGNOSTIC &mdash; &copy; 2026</footer>
+
+<script>
+  const NULL_TEXT = '— not present —';
+
+  async function loadKeyHeaders() {
+    const res = await fetch('/phoneinfo.php');
+    const data = await res.json();
+    const grid = document.getElementById('key-headers');
+    grid.innerHTML = Object.entries(data).map(([key, val]) => {
+      const isIp = key === 'Client Address';
+      const cls = val === null ? 'null-val' : isIp ? 'highlight' : '';
+      return `
+        <div class="card-row">
+          <div class="card-key">${key}</div>
+          <div class="card-value ${cls}">${val ?? NULL_TEXT}</div>
+        </div>`;
+    }).join('');
+  }
+
+  async function loadAllHeaders() {
+    const res = await fetch('/api/headers');
+    const data = await res.json();
+    const container = document.getElementById('all-headers-content');
+    container.innerHTML = Object.entries(data).map(([key, val]) => `
+      <div class="header-row">
+        <div class="header-name">${key}</div>
+        <div class="header-val">${val}</div>
+      </div>`).join('');
+  }
+
+  document.getElementById('reveal-btn').addEventListener('click', async function() {
+    const panel = document.getElementById('all-headers');
+    const isOpen = panel.classList.toggle('visible');
+    this.classList.toggle('open', isOpen);
+    this.querySelector('.btn-label').textContent = isOpen ? 'Hide Headers' : 'Reveal All Headers';
+    if (isOpen) await loadAllHeaders();
+  });
+
+  loadKeyHeaders();
+</script>
+</body>
+</html>

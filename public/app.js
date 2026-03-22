@@ -146,10 +146,18 @@ function renderModal(model) {
           <span class="grade-badge badge-${model.grade}">${model.grade}</span>
           ${model.subline ? `<span style="font-size:0.75rem;color:var(--text3)">${model.subline}</span>` : ''}
         </div>
-        <div class="modal-name">${model.name}</div>
-        <div class="modal-series">${model.series}</div>
-        ${model.modelNumber ? `<div class="modal-model-number">${model.modelNumber}</div>` : ''}
-        ${model.notes && model.grade === 'OTHER' ? `<div style="font-size:0.78rem;color:var(--text3);margin-bottom:12px;">${model.notes}</div>` : ''}
+        <div class="field-group">
+          <label class="field-label">Name</label>
+          <input class="notes-input" style="min-height:unset;padding:8px 12px;" id="edit-name" value="${model.name}" />
+        </div>
+        <div class="field-group">
+          <label class="field-label">Series</label>
+          <input class="notes-input" style="min-height:unset;padding:8px 12px;" id="edit-series" value="${model.series}" />
+        </div>
+        <div class="field-group">
+          <label class="field-label">Model Number</label>
+          <input class="notes-input" style="min-height:unset;padding:8px 12px;" id="edit-model-number" value="${model.modelNumber || ''}" />
+        </div>
         <div class="field-group">
           <label class="field-label" for="status-select">Build Status</label>
           <select class="status-select" id="status-select">
@@ -162,7 +170,10 @@ function renderModal(model) {
           <label class="field-label" for="notes-input">Notes</label>
           <textarea class="notes-input" id="notes-input" placeholder="Build notes, tips, progress...">${model.notes || ''}</textarea>
         </div>
-        <button class="add-photo-btn" id="save-btn">Save Changes</button>
+        <div style="display:flex;gap:8px;">
+          <button class="add-photo-btn" id="save-btn" style="flex:1;">Save Changes</button>
+          <button class="delete-model-btn" id="delete-btn" title="Delete model">🗑</button>
+        </div>
       </div>
     </div>
     <div class="build-section">
@@ -179,6 +190,7 @@ function renderModal(model) {
 
   // Bind events
   document.getElementById('save-btn').addEventListener('click', saveChanges);
+  document.getElementById('delete-btn').addEventListener('click', deleteModel);
   document.getElementById('thumb-upload').addEventListener('change', uploadThumbnail);
   document.getElementById('fetch-image-btn').addEventListener('click', fetchImageFromWiki);
   document.getElementById('build-upload').addEventListener('change', uploadBuildPhotos);
@@ -218,10 +230,14 @@ async function fetchImageFromWiki() {
 async function saveChanges() {
   const status = document.getElementById('status-select').value;
   const notes = document.getElementById('notes-input').value;
+  const name = document.getElementById('edit-name').value.trim();
+  const series = document.getElementById('edit-series').value.trim();
+  const modelNumber = document.getElementById('edit-model-number').value.trim() || null;
+  if (!name || !series) return showToast('Name and series are required.');
   const res = await fetch(`/api/inventory/${openModelId}`, {
     method: 'PATCH',
     headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify({ status, notes })
+    body: JSON.stringify({ status, notes, name, series, modelNumber })
   });
   const updated = await res.json();
   const idx = inventory.findIndex(m => m.id === openModelId);
@@ -229,6 +245,17 @@ async function saveChanges() {
   renderGrades();
   renderStats();
   showToast('Saved!');
+}
+
+async function deleteModel() {
+  const model = inventory.find(m => m.id === openModelId);
+  if (!confirm(`Delete "${model.name}"? This cannot be undone.`)) return;
+  await fetch(`/api/inventory/${openModelId}`, { method: 'DELETE' });
+  inventory = inventory.filter(m => m.id !== openModelId);
+  closeModal();
+  renderGrades();
+  renderStats();
+  showToast('Model deleted.');
 }
 
 async function uploadThumbnail(e) {
@@ -311,7 +338,73 @@ function showToast(msg) {
   setTimeout(() => { toast.style.opacity = '0'; }, 2000);
 }
 
+// ── Add Model ──
+
+function openAddModal() {
+  document.getElementById('add-name').value = '';
+  document.getElementById('add-series').value = '';
+  document.getElementById('add-model-number').value = '';
+  document.getElementById('add-notes').value = '';
+  document.getElementById('add-modal-overlay').classList.remove('hidden');
+  document.body.style.overflow = 'hidden';
+  document.getElementById('add-name').focus();
+}
+
+function closeAddModal() {
+  document.getElementById('add-modal-overlay').classList.add('hidden');
+  document.body.style.overflow = '';
+}
+
+async function submitAddModel() {
+  const grade = document.getElementById('add-grade').value;
+  const name = document.getElementById('add-name').value.trim();
+  const series = document.getElementById('add-series').value.trim();
+  const modelNumber = document.getElementById('add-model-number').value.trim() || null;
+  const notes = document.getElementById('add-notes').value.trim();
+  const fetchImage = document.getElementById('add-fetch-image').checked;
+
+  if (!name || !series) return showToast('Name and series are required.');
+
+  const btn = document.getElementById('add-submit-btn');
+  btn.textContent = 'Adding...';
+  btn.disabled = true;
+
+  const res = await fetch('/api/inventory', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ grade, name, series, modelNumber, notes })
+  });
+  const model = await res.json();
+  inventory.push(model);
+
+  if (fetchImage) {
+    showToast('Added! Fetching image...');
+    try {
+      const imgRes = await fetch(`/api/inventory/${model.id}/fetch-image`, { method: 'POST' });
+      if (imgRes.ok) {
+        const updated = await imgRes.json();
+        inventory[inventory.findIndex(m => m.id === model.id)] = updated;
+      }
+    } catch {}
+  }
+
+  closeAddModal();
+  renderGrades();
+  renderStats();
+  showToast(`${name} added!`);
+  btn.textContent = 'Add to Inventory';
+  btn.disabled = false;
+}
+
 // ── Event bindings ──
+
+document.getElementById('add-model-btn').addEventListener('click', openAddModal);
+document.getElementById('add-modal-close').addEventListener('click', closeAddModal);
+document.getElementById('add-cancel-btn').addEventListener('click', closeAddModal);
+document.getElementById('add-submit-btn').addEventListener('click', submitAddModel);
+document.getElementById('add-modal-overlay').addEventListener('click', e => {
+  if (e.target === document.getElementById('add-modal-overlay')) closeAddModal();
+});
 
 document.getElementById('modal-close').addEventListener('click', closeModal);
 document.getElementById('modal-overlay').addEventListener('click', e => {

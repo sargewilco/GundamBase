@@ -495,6 +495,32 @@ main { max-width: 1400px; margin: 0 auto; padding: 2rem; }
   border-radius: 6px;
 }
 
+.add-model-btn {
+  padding: 7px 16px;
+  background: var(--accent);
+  border: none;
+  border-radius: 8px;
+  color: #fff;
+  font-size: 0.8rem;
+  font-weight: 700;
+  letter-spacing: 0.04em;
+  cursor: pointer;
+  transition: opacity 0.15s;
+}
+.add-model-btn:hover { opacity: 0.85; }
+
+.delete-model-btn {
+  padding: 8px 12px;
+  background: #2a1a1a;
+  border: 1px solid #ef444444;
+  border-radius: 8px;
+  color: var(--red);
+  font-size: 1rem;
+  cursor: pointer;
+  transition: all 0.15s;
+}
+.delete-model-btn:hover { background: #3a1a1a; border-color: var(--red); }
+
 .back-home {
   font-size: 0.72rem;
   letter-spacing: 0.15em;
