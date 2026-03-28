@@ -5,7 +5,7 @@
     "name": "Wing Gundam Zero Custom",
     "series": "Gundam Wing: Endless Waltz",
     "modelNumber": null,
-    "thumbnail": "/uploads/thumbnails/pg-001-auto.jpg",
+    "thumbnail": "/uploads/thumbnails/pg-001-box.jpg",
     "status": "backlog",
     "buildPhotos": [],
     "notes": ""
@@ -16,7 +16,7 @@
     "name": "MSM-07S Z'Gok (Char's Custom)",
     "series": "Mobile Suit Gundam",
     "modelNumber": "MSM-07S",
-    "thumbnail": "/uploads/thumbnails/mg-001-auto.JPG",
+    "thumbnail": "/uploads/thumbnails/mg-001-box.jpg",
     "status": "backlog",
     "buildPhotos": [],
     "notes": ""
@@ -27,7 +27,7 @@
     "name": "RX-0 Full Armor Unicorn Gundam Ver.Ka",
     "series": "Gundam Unicorn",
     "modelNumber": "RX-0",
-    "thumbnail": "/uploads/thumbnails/mg-002-auto.png",
+    "thumbnail": "/uploads/thumbnails/mg-002-box.jpg",
     "status": "backlog",
     "buildPhotos": [],
     "notes": ""
@@ -39,7 +39,7 @@
     "series": "Mobile Suit Zeta Gundam",
     "modelNumber": "MSZ-006",
     "wikiTitle": "MSZ-006 Zeta Gundam",
-    "thumbnail": "/uploads/thumbnails/mg-003-auto.png",
+    "thumbnail": "/uploads/thumbnails/mg-003-box.jpg",
     "status": "backlog",
     "buildPhotos": [],
     "notes": ""
@@ -50,7 +50,7 @@
     "name": "RX-78-2 Gundam Ver. 3.0",
     "series": "Mobile Suit Gundam",
     "modelNumber": "RX-78-2",
-    "thumbnail": "/uploads/thumbnails/mg-004-auto.jpg",
+    "thumbnail": "/uploads/thumbnails/mg-004-box.jpg",
     "status": "backlog",
     "buildPhotos": [],
     "notes": ""
@@ -61,7 +61,7 @@
     "name": "RGM-89 Jegan",
     "series": "Char's Counterattack",
     "modelNumber": "RGM-89",
-    "thumbnail": "/uploads/thumbnails/mg-005-auto.png",
+    "thumbnail": "/uploads/thumbnails/mg-005-box.jpg",
     "status": "backlog",
     "buildPhotos": [],
     "notes": ""
@@ -72,7 +72,7 @@
     "name": "F91 Gundam F91 Ver. 2.0",
     "series": "Mobile Suit Gundam F91",
     "modelNumber": "F91",
-    "thumbnail": "/uploads/thumbnails/mg-006-auto.png",
+    "thumbnail": "/uploads/thumbnails/mg-006-box.jpg",
     "status": "backlog",
     "buildPhotos": [],
     "notes": ""
@@ -83,7 +83,7 @@
     "name": "GNT-0000 00 Qan[T]",
     "series": "Gundam 00: A wakening of the Trailblazer",
     "modelNumber": "GNT-0000",
-    "thumbnail": "/uploads/thumbnails/mg-007-auto.jpg",
+    "thumbnail": "/uploads/thumbnails/mg-007-box.jpg",
     "status": "backlog",
     "buildPhotos": [],
     "notes": ""
@@ -94,7 +94,7 @@
     "name": "RX-0 Unicorn Gundam (Luminous Crystal Body)",
     "series": "Gundam Unicorn",
     "modelNumber": "RX-0",
-    "thumbnail": "/uploads/thumbnails/mg-008-auto.png",
+    "thumbnail": "/uploads/thumbnails/mg-008-box.jpg",
     "status": "backlog",
     "buildPhotos": [],
     "notes": ""
@@ -105,7 +105,7 @@
     "name": "RX-0 Unicorn Gundam (OVA version)",
     "series": "Gundam Unicorn",
     "modelNumber": "RX-0",
-    "thumbnail": "/uploads/thumbnails/mg-009-auto.png",
+    "thumbnail": "/uploads/thumbnails/mg-009-box.jpg",
     "status": "backlog",
     "buildPhotos": [],
     "notes": ""
@@ -127,7 +127,7 @@
     "name": "Freedom Gundam Ver. 2.0",
     "series": "Gundam SEED",
     "modelNumber": null,
-    "thumbnail": "/uploads/thumbnails/mg-011-auto.png",
+    "thumbnail": "/uploads/thumbnails/mg-011-box.jpg",
     "status": "backlog",
     "buildPhotos": [],
     "notes": ""
@@ -138,7 +138,7 @@
     "name": "RX-93 Nu Gundam Ver.Ka",
     "series": "Char's Counterattack",
     "modelNumber": "RX-93",
-    "thumbnail": "/uploads/thumbnails/mg-012-auto.jpg",
+    "thumbnail": "/uploads/thumbnails/mg-012-box.jpg",
     "status": "backlog",
     "buildPhotos": [],
     "notes": ""
@@ -149,7 +149,7 @@
     "name": "GaoGaiGar",
     "series": "The King of Braves GaoGaiGar",
     "modelNumber": null,
-    "thumbnail": "/uploads/thumbnails/rg-001-1774053439125.png",
+    "thumbnail": "/uploads/thumbnails/rg-001-box.jpg",
     "status": "backlog",
     "buildPhotos": [],
     "notes": ""
@@ -160,7 +160,7 @@
     "name": "RX-78-2 Gundam",
     "series": "Mobile Suit Gundam",
     "modelNumber": "RX-78-2",
-    "thumbnail": "/uploads/thumbnails/rg-002-auto.jpg",
+    "thumbnail": "/uploads/thumbnails/rg-002-box.jpg",
     "status": "backlog",
     "buildPhotos": [],
     "notes": ""
@@ -182,7 +182,7 @@
     "name": "RX-93 Nu Gundam",
     "series": "Char's Counterattack",
     "modelNumber": "RX-93",
-    "thumbnail": "/uploads/thumbnails/rg-004-auto.jpg",
+    "thumbnail": "/uploads/thumbnails/rg-004-box.jpg",
     "status": "backlog",
     "buildPhotos": [],
     "notes": ""
@@ -193,7 +193,7 @@
     "name": "MSN-02 Zeong",
     "series": "Mobile Suit Gundam",
     "modelNumber": "MSN-02",
-    "thumbnail": "/uploads/thumbnails/rg-005-auto.jpg",
+    "thumbnail": "/uploads/thumbnails/rg-005-box.jpg",
     "status": "backlog",
     "buildPhotos": [],
     "notes": ""
@@ -204,7 +204,7 @@
     "name": "Wing Gundam Zero EW",
     "series": "Gundam Wing: Endless Waltz",
     "modelNumber": null,
-    "thumbnail": "/uploads/thumbnails/rg-006-auto.png",
+    "thumbnail": "/uploads/thumbnails/rg-006-box.jpg",
     "status": "backlog",
     "buildPhotos": [],
     "notes": ""
@@ -215,7 +215,7 @@
     "name": "Gundam Aerial (1/100)",
     "series": "The Witch from Mercury",
     "modelNumber": null,
-    "thumbnail": "/uploads/thumbnails/fm-001-auto.png",
+    "thumbnail": "/uploads/thumbnails/fm-001-box.jpg",
     "status": "backlog",
     "buildPhotos": [],
     "notes": ""
@@ -226,7 +226,7 @@
     "name": "MAILeS Kenbu Zan (1/48)",
     "series": "Kyoukai Senki",
     "modelNumber": null,
-    "thumbnail": "/uploads/thumbnails/fm-002-auto.png",
+    "thumbnail": "/uploads/thumbnails/fm-002-box.jpg",
     "status": "backlog",
     "buildPhotos": [],
     "notes": ""
@@ -237,7 +237,7 @@
     "name": "Burning Gundam (Future Century)",
     "series": "G Gundam",
     "modelNumber": null,
-    "thumbnail": "/uploads/thumbnails/hg-001-auto.jpg",
+    "thumbnail": "/uploads/thumbnails/hg-001-box.jpg",
     "status": "backlog",
     "buildPhotos": [],
     "notes": ""
@@ -248,7 +248,7 @@
     "name": "Gundam Barbatos Lupus Rex",
     "series": "Iron-Blooded Orphans",
     "modelNumber": null,
-    "thumbnail": "/uploads/thumbnails/hg-002-auto.png",
+    "thumbnail": "/uploads/thumbnails/hg-002-box.jpg",
     "status": "backlog",
     "buildPhotos": [],
     "notes": ""
@@ -270,7 +270,7 @@
     "name": "Gundam Calibarn",
     "series": "The Witch from Mercury",
     "modelNumber": null,
-    "thumbnail": "/uploads/thumbnails/hg-004-auto.png",
+    "thumbnail": "/uploads/thumbnails/hg-004-box.jpg",
     "status": "backlog",
     "buildPhotos": [],
     "notes": ""
@@ -292,7 +292,7 @@
     "name": "GN-001 Gundam Exia",
     "series": "Gundam 00",
     "modelNumber": "GN-001",
-    "thumbnail": "/uploads/thumbnails/hg-006-auto.png",
+    "thumbnail": "/uploads/thumbnails/hg-006-box.jpg",
     "status": "backlog",
     "buildPhotos": [],
     "notes": ""
@@ -303,7 +303,7 @@
     "name": "RX-77-02 Guncannon (Cucuruz Doan's Island Ver.)",
     "series": "Mobile Suit Gundam",
     "modelNumber": "RX-77-02",
-    "thumbnail": "/uploads/thumbnails/hg-007-auto.png",
+    "thumbnail": "/uploads/thumbnails/hg-007-box.jpg",
     "status": "backlog",
     "buildPhotos": [],
     "notes": ""
@@ -314,7 +314,7 @@
     "name": "RX-77-2 Guncannon (Revive)",
     "series": "Mobile Suit Gundam",
     "modelNumber": "RX-77-2",
-    "thumbnail": "/uploads/thumbnails/hg-008-auto.jpg",
+    "thumbnail": "/uploads/thumbnails/hg-008-box.jpg",
     "status": "backlog",
     "buildPhotos": [],
     "notes": ""
@@ -325,7 +325,7 @@
     "name": "OZ-06MS Leo",
     "series": "Gundam Wing",
     "modelNumber": "OZ-06MS",
-    "thumbnail": "/uploads/thumbnails/hg-009-auto.jpg",
+    "thumbnail": "/uploads/thumbnails/hg-009-box.jpg",
     "status": "backlog",
     "buildPhotos": [],
     "notes": ""
@@ -336,7 +336,7 @@
     "name": "Gundam Lfrith",
     "series": "The Witch from Mercury",
     "modelNumber": null,
-    "thumbnail": "/uploads/thumbnails/hg-010-auto.png",
+    "thumbnail": "/uploads/thumbnails/hg-010-box.jpg",
     "status": "backlog",
     "buildPhotos": [],
     "notes": ""
@@ -347,7 +347,7 @@
     "name": "MS-06S Char's Zaku II (Revive)",
     "series": "Mobile Suit Gundam",
     "modelNumber": "MS-06S",
-    "thumbnail": "/uploads/thumbnails/hg-011-auto.jpg",
+    "thumbnail": "/uploads/thumbnails/hg-011-box.jpg",
     "status": "backlog",
     "buildPhotos": [],
     "notes": ""
@@ -358,7 +358,7 @@
     "name": "MSN-06S Sinanju",
     "series": "Gundam Unicorn",
     "modelNumber": "MSN-06S",
-    "thumbnail": "/uploads/thumbnails/hg-012-auto.jpg",
+    "thumbnail": "/uploads/thumbnails/hg-012-box.jpg",
     "status": "backlog",
     "buildPhotos": [],
     "notes": ""
@@ -369,7 +369,7 @@
     "name": "Brady Hound (Bandai Exclusive)",
     "series": "The Witch from Mercury",
     "modelNumber": null,
-    "thumbnail": "/uploads/thumbnails/hg-013-auto.jpg",
+    "thumbnail": "/uploads/thumbnails/hg-013-box.jpg",
     "status": "backlog",
     "buildPhotos": [],
     "notes": ""
@@ -380,7 +380,7 @@
     "name": "Immortal Justice Gundam",
     "series": "Gundam SEED Freedom",
     "modelNumber": null,
-    "thumbnail": "/uploads/thumbnails/hg-014-auto.png",
+    "thumbnail": "/uploads/thumbnails/hg-014-box.jpg",
     "status": "backlog",
     "buildPhotos": [],
     "notes": ""
@@ -391,7 +391,7 @@
     "name": "Gundam AGE-FX",
     "series": "Gundam AGE",
     "modelNumber": null,
-    "thumbnail": "/uploads/thumbnails/hg-015-auto.png",
+    "thumbnail": "/uploads/thumbnails/hg-015-box.jpg",
     "status": "backlog",
     "buildPhotos": [],
     "notes": ""
@@ -402,7 +402,7 @@
     "name": "Rising Freedom Gundam",
     "series": "Gundam SEED Freedom",
     "modelNumber": null,
-    "thumbnail": "/uploads/thumbnails/hg-016-auto.png",
+    "thumbnail": "/uploads/thumbnails/hg-016-box.jpg",
     "status": "backlog",
     "buildPhotos": [],
     "notes": ""
@@ -413,7 +413,7 @@
     "name": "ATM-09-DD Burglarydog",
     "series": "Armored Trooper VOTOMS",
     "modelNumber": "ATM-09-DD",
-    "thumbnail": null,
+    "thumbnail": "/uploads/thumbnails/hg-017-box.jpg",
     "status": "backlog",
     "buildPhotos": [],
     "notes": ""
@@ -424,7 +424,7 @@
     "name": "Gundam Vidar",
     "series": "Iron-Blooded Orphans",
     "modelNumber": null,
-    "thumbnail": "/uploads/thumbnails/hg-018-auto.png",
+    "thumbnail": "/uploads/thumbnails/hg-018-box.jpg",
     "status": "backlog",
     "buildPhotos": [],
     "notes": ""
@@ -435,7 +435,7 @@
     "name": "Hyaku-Shiki",
     "series": "Mobile Suit Zeta Gundam",
     "modelNumber": "MSN-00100",
-    "thumbnail": "/uploads/thumbnails/hg-019-auto.jpg",
+    "thumbnail": "/uploads/thumbnails/hg-019-box.jpg",
     "status": "backlog",
     "buildPhotos": [],
     "notes": "",
@@ -447,7 +447,7 @@
     "name": "RX-79[G] Ez-8",
     "series": "08th MS Team",
     "modelNumber": "RX-79[G]",
-    "thumbnail": "/uploads/thumbnails/hg-020-auto.png",
+    "thumbnail": "/uploads/thumbnails/hg-020-box.jpg",
     "status": "backlog",
     "buildPhotos": [],
     "notes": "",
@@ -459,7 +459,7 @@
     "name": "RX-93 Nu Gundam",
     "series": "Char's Counterattack",
     "modelNumber": "RX-93",
-    "thumbnail": "/uploads/thumbnails/eg-001-auto.jpg",
+    "thumbnail": "/uploads/thumbnails/eg-001-box.jpg",
     "status": "backlog",
     "buildPhotos": [],
     "notes": ""
@@ -470,7 +470,7 @@
     "name": "RX-78-2 Gundam",
     "series": "Mobile Suit Gundam",
     "modelNumber": "RX-78-2",
-    "thumbnail": "/uploads/thumbnails/eg-002-auto.jpg",
+    "thumbnail": "/uploads/thumbnails/eg-002-box.jpg",
     "status": "backlog",
     "buildPhotos": [],
     "notes": ""
@@ -481,7 +481,7 @@
     "name": "Wing Gundam",
     "series": "Gundam Wing",
     "modelNumber": null,
-    "thumbnail": "/uploads/thumbnails/eg-003-auto.png",
+    "thumbnail": "/uploads/thumbnails/eg-003-box.jpg",
     "status": "backlog",
     "buildPhotos": [],
     "notes": ""
@@ -492,7 +492,7 @@
     "name": "1/100 MBV-707-G Temjin",
     "series": "Virtual On",
     "modelNumber": "MBV-707-G",
-    "thumbnail": "/uploads/thumbnails/other-001-auto.jpg",
+    "thumbnail": "/uploads/thumbnails/other-001-box.jpg",
     "status": "backlog",
     "buildPhotos": [
       {
@@ -508,7 +508,7 @@
     "name": "1/100 TF-14 A/M+ Fei-Yen [Kn]",
     "series": "Virtual On",
     "modelNumber": "TF-14",
-    "thumbnail": "/uploads/thumbnails/other-002-auto.jpg",
+    "thumbnail": "/uploads/thumbnails/other-002-box.jpg",
     "status": "backlog",
     "buildPhotos": [],
     "notes": "Hasegawa"

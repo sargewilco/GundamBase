@@ -10,5 +10,12 @@
   "dependencies": {
     "express": "^4.18.2",
     "multer": "^2.0.0"
+  },
+  "devDependencies": {
+    "@anthropic-ai/sdk": "^0.80.0",
+    "heic-convert": "^2.1.0",
+    "node-fetch": "^3.3.2",
+    "sharp": "^0.34.5",
+    "undici": "^7.24.6"
   }
 }
