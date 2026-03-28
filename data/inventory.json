@@ -512,5 +512,148 @@
     "status": "backlog",
     "buildPhotos": [],
     "notes": "Hasegawa"
+  },
+  {
+    "id": "mg-013",
+    "grade": "MG",
+    "name": "MSN-06S Sinanju Stein Ver.Ka",
+    "series": "Gundam Unicorn",
+    "modelNumber": "MSN-06S",
+    "thumbnail": "/uploads/thumbnails/mg-013-box.jpg",
+    "status": "backlog",
+    "buildPhotos": [],
+    "notes": ""
+  },
+  {
+    "id": "hg-021",
+    "grade": "HG",
+    "name": "Demi Barding",
+    "series": "The Witch from Mercury",
+    "modelNumber": null,
+    "thumbnail": "/uploads/thumbnails/hg-021-box.jpg",
+    "status": "backlog",
+    "buildPhotos": [],
+    "notes": ""
+  },
+  {
+    "id": "mg-014",
+    "grade": "MG",
+    "name": "XM-X1 Crossbone Gundam X1 Ver.Ka",
+    "series": "Mobile Suit Crossbone Gundam",
+    "modelNumber": "XM-X1",
+    "thumbnail": "/uploads/thumbnails/mg-014-box.jpg",
+    "status": "backlog",
+    "buildPhotos": [],
+    "notes": ""
+  },
+  {
+    "id": "hg-022",
+    "grade": "HG",
+    "name": "RGM-79 Light-Type Guncannon",
+    "series": "Mobile Suit Gundam GQuuuuuX",
+    "modelNumber": "RGM-79",
+    "thumbnail": "/uploads/thumbnails/hg-022-box.jpg",
+    "status": "backlog",
+    "buildPhotos": [],
+    "notes": ""
+  },
+  {
+    "id": "mg-015",
+    "grade": "MG",
+    "name": "XXXG-01H Gundam Heavyarms EW",
+    "series": "Gundam Wing: Endless Waltz",
+    "modelNumber": "XXXG-01H",
+    "thumbnail": "/uploads/thumbnails/mg-015-box.jpg",
+    "status": "backlog",
+    "buildPhotos": [],
+    "notes": ""
+  },
+  {
+    "id": "other-003",
+    "grade": "OTHER",
+    "name": "X-Wing Fighter (Star Wars: The Rise of Skywalker) Vehicle Model 017",
+    "series": "Star Wars: The Rise of Skywalker",
+    "modelNumber": null,
+    "thumbnail": "/uploads/thumbnails/other-003-box.jpg",
+    "status": "backlog",
+    "buildPhotos": [],
+    "notes": ""
+  },
+  {
+    "id": "hg-023",
+    "grade": "HG",
+    "name": "Brady Hound (Brad Exclusive)",
+    "series": "Kyoukai Senki",
+    "modelNumber": null,
+    "thumbnail": "/uploads/thumbnails/hg-023-box.jpg",
+    "status": "backlog",
+    "buildPhotos": [],
+    "notes": ""
+  },
+  {
+    "id": "rg-007",
+    "grade": "RG",
+    "name": "Gundam Astray Red Frame",
+    "series": "Gundam SEED Astray",
+    "modelNumber": "MBF-P02",
+    "thumbnail": "/uploads/thumbnails/rg-007-box.jpg",
+    "status": "backlog",
+    "buildPhotos": [],
+    "notes": ""
+  },
+  {
+    "id": "other-004",
+    "grade": "OTHER",
+    "name": "SDW Heroes Robinhood Gundam AGE-2",
+    "series": "SD Gundam World Heroes",
+    "modelNumber": null,
+    "thumbnail": "/uploads/thumbnails/other-004-box.jpg",
+    "status": "backlog",
+    "buildPhotos": [],
+    "notes": ""
+  },
+  {
+    "id": "other-005",
+    "grade": "OTHER",
+    "name": "SDW Heroes Saizo Gundam Delta Kai",
+    "series": "SD Gundam World Heroes",
+    "modelNumber": null,
+    "thumbnail": "/uploads/thumbnails/other-005-box.jpg",
+    "status": "backlog",
+    "buildPhotos": [],
+    "notes": ""
+  },
+  {
+    "id": "other-006",
+    "grade": "OTHER",
+    "name": "RX-77-2 Guncannon (Ecopla)",
+    "series": "Mobile Suit Gundam",
+    "modelNumber": "RX-77-2",
+    "thumbnail": "/uploads/thumbnails/other-006-box.jpg",
+    "status": "backlog",
+    "buildPhotos": [],
+    "notes": ""
+  },
+  {
+    "id": "hg-024",
+    "grade": "HG",
+    "name": "RX-0[N] Unicorn Gundam 02 Banshee Norn (Destroy Mode)",
+    "series": "Gundam Unicorn",
+    "modelNumber": "RX-0[N]",
+    "thumbnail": "/uploads/thumbnails/hg-024-box.jpg",
+    "status": "backlog",
+    "buildPhotos": [],
+    "notes": ""
+  },
+  {
+    "id": "hg-025",
+    "grade": "HG",
+    "name": "Gundam Bael",
+    "series": "Iron-Blooded Orphans",
+    "modelNumber": "ASW-G-01",
+    "thumbnail": "/uploads/thumbnails/hg-025-box.jpg",
+    "status": "backlog",
+    "buildPhotos": [],
+    "notes": ""
   }
 ]
