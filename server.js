@@ -3,6 +3,7 @@ const multer = require('multer');
 const path = require('path');
 const fs = require('fs');
 const https = require('https');
+const sharp = require('sharp');
 
 const app = express();
 const PORT = 3000;
@@ -91,26 +92,39 @@ app.delete('/api/inventory/:id', (req, res) => {
 });
 
 // POST upload thumbnail or build photo
-app.post('/api/inventory/:id/upload/:type', upload.single('photo'), (req, res) => {
-  const inventory = readInventory();
-  const idx = inventory.findIndex(m => m.id === req.params.id);
-  if (idx === -1) return res.status(404).json({ error: 'Not found' });
+app.post('/api/inventory/:id/upload/:type', upload.single('photo'), async (req, res) => {
+  try {
+    const inventory = readInventory();
+    const idx = inventory.findIndex(m => m.id === req.params.id);
+    if (idx === -1) return res.status(404).json({ error: 'Not found' });
 
-  const filePath = `/uploads/${req.params.type === 'thumbnail' ? 'thumbnails' : 'builds'}/${req.file.filename}`;
+    const isThumbnail = req.params.type === 'thumbnail';
+    const subdir = isThumbnail ? 'thumbnails' : 'builds';
+    const rawPath = req.file.path;
 
-  if (req.params.type === 'thumbnail') {
-    // Remove old thumbnail file if it exists
-    if (inventory[idx].thumbnail) {
-      const oldPath = path.join(__dirname, 'public', inventory[idx].thumbnail);
-      if (fs.existsSync(oldPath)) fs.unlinkSync(oldPath);
+    // Convert to JPEG so HEIC and other formats display in all browsers
+    const jpegFilename = req.file.filename.replace(/\.[^.]+$/, '.jpg');
+    const jpegPath = path.join(UPLOADS_DIR, subdir, jpegFilename);
+    await sharp(rawPath).jpeg({ quality: 88 }).toFile(jpegPath);
+    if (rawPath !== jpegPath) fs.unlinkSync(rawPath);
+
+    const filePath = `/uploads/${subdir}/${jpegFilename}`;
+
+    if (isThumbnail) {
+      if (inventory[idx].thumbnail) {
+        const oldPath = path.join(__dirname, 'public', inventory[idx].thumbnail);
+        if (fs.existsSync(oldPath)) fs.unlinkSync(oldPath);
+      }
+      inventory[idx].thumbnail = filePath;
+    } else {
+      inventory[idx].buildPhotos.push({ path: filePath, date: new Date().toISOString() });
     }
-    inventory[idx].thumbnail = filePath;
-  } else {
-    inventory[idx].buildPhotos.push({ path: filePath, date: new Date().toISOString() });
-  }
 
-  writeInventory(inventory);
-  res.json(inventory[idx]);
+    writeInventory(inventory);
+    res.json(inventory[idx]);
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
 });
 
 // POST auto-fetch thumbnail from Gundam Fandom Wiki
