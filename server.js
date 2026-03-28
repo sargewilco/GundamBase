@@ -62,7 +62,7 @@ app.patch('/api/inventory/:id', (req, res) => {
   const inventory = readInventory();
   const idx = inventory.findIndex(m => m.id === req.params.id);
   if (idx === -1) return res.status(404).json({ error: 'Not found' });
-  const allowed = ['status', 'notes', 'name', 'series', 'modelNumber'];
+  const allowed = ['status', 'notes', 'name', 'series', 'modelNumber', 'grade'];
   allowed.forEach(key => {
     if (req.body[key] !== undefined) inventory[idx][key] = req.body[key];
   });

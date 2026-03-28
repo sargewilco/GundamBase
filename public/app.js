@@ -143,8 +143,9 @@ function renderModal(model) {
       </div>
       <div class="modal-info">
         <div class="modal-grade-row">
-          <span class="grade-badge badge-${model.grade}">${model.grade}</span>
-          ${model.subline ? `<span style="font-size:0.75rem;color:var(--text3)">${model.subline}</span>` : ''}
+          <select class="status-select" id="edit-grade">
+            ${GRADE_ORDER.map(g => `<option value="${g}" ${model.grade===g?'selected':''}>${g} — ${GRADE_LABELS[g]}</option>`).join('')}
+          </select>
         </div>
         <div class="field-group">
           <label class="field-label">Name</label>
@@ -228,6 +229,7 @@ async function fetchImageFromWiki() {
 }
 
 async function saveChanges() {
+  const grade = document.getElementById('edit-grade').value;
   const status = document.getElementById('status-select').value;
   const notes = document.getElementById('notes-input').value;
   const name = document.getElementById('edit-name').value.trim();
@@ -237,7 +239,7 @@ async function saveChanges() {
   const res = await fetch(`/api/inventory/${openModelId}`, {
     method: 'PATCH',
     headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify({ status, notes, name, series, modelNumber })
+    body: JSON.stringify({ grade, status, notes, name, series, modelNumber })
   });
   const updated = await res.json();
   const idx = inventory.findIndex(m => m.id === openModelId);
