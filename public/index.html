@@ -14,33 +14,52 @@
         <span class="logo-text">GUNDAM<span>BASE</span></span>
       </div>
       <div class="header-stats" id="header-stats"></div>
-      <button class="add-model-btn" id="add-model-btn">+ Add Model</button>
-      <a href="/" class="back-home">← tomcannon.com</a>
+      <div class="header-actions">
+        <button class="icon-btn" id="stats-toggle-btn" title="Stats">📊</button>
+        <button class="add-model-btn" id="add-model-btn">+ Add</button>
+        <a href="/" class="back-home">← tomcannon.com</a>
+      </div>
     </div>
   </header>
 
   <main>
-    <div class="controls">
-      <div class="filter-tabs" id="grade-tabs">
-        <button class="tab active" data-grade="ALL">All</button>
-        <button class="tab" data-grade="PG">PG</button>
-        <button class="tab" data-grade="MG">MG</button>
-        <button class="tab" data-grade="RG">RG</button>
-        <button class="tab" data-grade="FM">FM</button>
-        <button class="tab" data-grade="HG">HG</button>
-        <button class="tab" data-grade="EG">EG</button>
-        <button class="tab" data-grade="OTHER">Other</button>
-      </div>
-      <div class="status-filters">
-        <button class="status-btn active" data-status="ALL">All</button>
-        <button class="status-btn" data-status="backlog">Backlog</button>
-        <button class="status-btn" data-status="in-progress">In Progress</button>
-        <button class="status-btn" data-status="complete">Complete</button>
-      </div>
-    </div>
+    <section id="stats-panel" class="stats-panel hidden"></section>
 
-    <div id="grade-sections"></div>
+    <div id="collection-view">
+      <div class="controls">
+        <div class="filter-scroll"><div class="filter-tabs" id="grade-tabs">
+          <button class="tab active" data-grade="ALL">All</button>
+          <button class="tab" data-grade="PG">PG</button>
+          <button class="tab" data-grade="MG">MG</button>
+          <button class="tab" data-grade="RG">RG</button>
+          <button class="tab" data-grade="FM">FM</button>
+          <button class="tab" data-grade="HG">HG</button>
+          <button class="tab" data-grade="EG">EG</button>
+          <button class="tab" data-grade="OTHER">Other</button>
+        </div></div>
+        <div class="filter-scroll"><div class="status-filters">
+          <button class="status-btn active" data-status="ALL">All</button>
+          <button class="status-btn" data-status="backlog">Backlog</button>
+          <button class="status-btn" data-status="in-progress">In Progress</button>
+          <button class="status-btn" data-status="complete">Complete</button>
+        </div></div>
+      </div>
+      <div id="grade-sections"></div>
+    </div>
   </main>
+
+  <!-- Mobile bottom nav -->
+  <nav class="mobile-nav">
+    <button class="mobile-nav-btn active" data-view="collection">
+      <span>⬡</span><span class="mobile-nav-label">Collection</span>
+    </button>
+    <button class="mobile-nav-btn mobile-nav-add" id="mobile-add-btn">
+      <span>＋</span>
+    </button>
+    <button class="mobile-nav-btn" data-view="stats">
+      <span>📊</span><span class="mobile-nav-label">Stats</span>
+    </button>
+  </nav>
 
   <!-- Add Model Modal -->
   <div id="add-modal-overlay" class="modal-overlay hidden">
