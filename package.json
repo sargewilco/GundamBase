@@ -1,5 +1,5 @@
 {
-  "name": "gundam-base",
+  "name": "kit-keeper",
   "version": "1.0.0",
   "description": "Gunpla inventory manager",
   "main": "server.js",

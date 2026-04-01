@@ -137,7 +137,7 @@ app.post('/api/inventory/:id/fetch-image', async (req, res) => {
 
   function wikiGet(hostname, urlPath) {
     return new Promise((resolve, reject) => {
-      const opts = { hostname, path: urlPath, method: 'GET', headers: { 'User-Agent': 'GundamBase/1.0' } };
+      const opts = { hostname, path: urlPath, method: 'GET', headers: { 'User-Agent': 'KitKeeper/1.0' } };
       const request = https.request(opts, response => {
         let data = '';
         response.on('data', chunk => data += chunk);
@@ -151,7 +151,7 @@ app.post('/api/inventory/:id/fetch-image', async (req, res) => {
   function downloadFile(url, dest) {
     return new Promise((resolve, reject) => {
       const file = fs.createWriteStream(dest);
-      https.get(url, { headers: { 'User-Agent': 'GundamBase/1.0' } }, response => {
+      https.get(url, { headers: { 'User-Agent': 'KitKeeper/1.0' } }, response => {
         if (response.statusCode === 301 || response.statusCode === 302) {
           file.close(); fs.unlink(dest, () => {});
           return downloadFile(response.headers.location, dest).then(resolve).catch(reject);
@@ -226,5 +226,5 @@ app.delete('/api/inventory/:id/build-photo', (req, res) => {
 });
 
 app.listen(PORT, () => {
-  console.log(`GundamBase running at http://localhost:${PORT}`);
+  console.log(`Kit Keeper running at http://localhost:${PORT}`);
 });
