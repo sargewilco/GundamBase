@@ -473,6 +473,7 @@ main { max-width: 1400px; margin: 0 auto; padding: 1.5rem; }
   display: flex; align-items: center; justify-content: center; margin-bottom: 8px;
 }
 .modal-thumb img { width: 100%; height: 100%; object-fit: cover; object-position: top center; }
+.modal-thumb-zoomable { cursor: zoom-in; }
 .modal-thumb-placeholder { color: var(--text3); text-align: center; }
 .modal-thumb-placeholder .icon { font-size: 3rem; opacity: 0.3; display: block; margin-bottom: 4px; }
 .upload-btn {

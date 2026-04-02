@@ -243,7 +243,7 @@ function closeModal() {
 
 function renderModal(model) {
   const thumbHtml = model.thumbnail
-    ? `<img src="${model.thumbnail}" alt="${model.name}" />`
+    ? `<img src="${model.thumbnail}" alt="${model.name}" class="modal-thumb-zoomable" data-src="${model.thumbnail}" />`
     : `<div class="modal-thumb-placeholder"><span class="icon">🤖</span><small>No thumbnail</small></div>`;
   const buildPhotosHtml = model.buildPhotos.length === 0
     ? `<div class="empty-build">No build photos yet — add some below!</div>`
@@ -308,6 +308,7 @@ function renderModal(model) {
   document.getElementById('save-btn').addEventListener('click', saveChanges);
   document.getElementById('delete-btn').addEventListener('click', deleteModel);
   document.getElementById('thumb-upload').addEventListener('change', uploadThumbnail);
+  document.querySelector('.modal-thumb-zoomable')?.addEventListener('click', e => openLightbox(e.target.dataset.src));
   document.getElementById('fetch-image-btn').addEventListener('click', fetchImageFromWiki);
   document.getElementById('build-upload').addEventListener('change', uploadBuildPhotos);
   document.querySelectorAll('.build-photo-delete').forEach(btn => {
