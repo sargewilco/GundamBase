@@ -13,6 +13,7 @@ const GRADE_COLORS = {
 let inventory = [];
 let activeGrade = 'ALL';
 let activeStatus = 'ALL';
+let searchQuery = '';
 let openModelId = null;
 let statsVisible = false;
 
@@ -158,10 +159,15 @@ function setView(view) {
 // ── Collection ──
 
 function getFiltered() {
+  const q = searchQuery.toLowerCase();
   return inventory.filter(m => {
     const gradeMatch = activeGrade === 'ALL' || m.grade === activeGrade;
     const statusMatch = activeStatus === 'ALL' || m.status === activeStatus;
-    return gradeMatch && statusMatch;
+    const searchMatch = !q ||
+      m.name.toLowerCase().includes(q) ||
+      m.series.toLowerCase().includes(q) ||
+      (m.modelNumber && m.modelNumber.toLowerCase().includes(q));
+    return gradeMatch && statusMatch && searchMatch;
   });
 }
 
@@ -508,6 +514,21 @@ document.getElementById('mobile-add-btn').addEventListener('click', openAddModal
 
 document.querySelectorAll('.mobile-nav-btn[data-view]').forEach(btn => {
   btn.addEventListener('click', () => setView(btn.dataset.view));
+});
+
+// ── Search ──
+
+document.getElementById('search-input').addEventListener('input', e => {
+  searchQuery = e.target.value.trim();
+  document.getElementById('search-clear').classList.toggle('hidden', !searchQuery);
+  renderGrades();
+});
+
+document.getElementById('search-clear').addEventListener('click', () => {
+  searchQuery = '';
+  document.getElementById('search-input').value = '';
+  document.getElementById('search-clear').classList.add('hidden');
+  renderGrades();
 });
 
 // ── Init ──
