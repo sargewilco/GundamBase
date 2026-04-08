@@ -5,6 +5,7 @@ const fs = require('fs');
 const https = require('https');
 const http = require('http');
 const sharp = require('sharp');
+const heicConvert = require('heic-convert');
 
 const app = express();
 const PORT = 3000;
@@ -215,11 +216,14 @@ const memUpload = multer({ storage: multer.memoryStorage(), limits: { fileSize: 
 
 app.post('/api/scan-box', memUpload.single('photo'), async (req, res) => {
   if (!req.file) return res.status(400).json({ error: 'No image provided' });
-  const isHeic = /heic|heif/i.test(req.file.mimetype) || /\.heic$/i.test(req.file.originalname);
-  if (isHeic) return res.status(415).json({ error: 'HEIC photos cannot be scanned — please use a JPEG. In iOS Camera settings, set format to "Most Compatible".' });
   const tmpPath = path.join(UPLOADS_DIR, `scan-tmp-${Date.now()}`);
   try {
-    fs.writeFileSync(tmpPath, req.file.buffer);
+    const isHeic = /heic|heif/i.test(req.file.mimetype) || /\.heic$/i.test(req.file.originalname);
+    let sourceBuffer = req.file.buffer;
+    if (isHeic) {
+      sourceBuffer = Buffer.from(await heicConvert({ buffer: sourceBuffer, format: 'JPEG', quality: 0.85 }));
+    }
+    fs.writeFileSync(tmpPath, sourceBuffer);
     const jpegBuffer = await sharp(tmpPath).resize(512, 512, { fit: 'inside' }).jpeg({ quality: 85 }).toBuffer();
     fs.unlinkSync(tmpPath);
     const b64 = jpegBuffer.toString('base64');
