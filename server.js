@@ -3,6 +3,7 @@ const multer = require('multer');
 const path = require('path');
 const fs = require('fs');
 const https = require('https');
+const http = require('http');
 const sharp = require('sharp');
 
 const app = express();
@@ -204,6 +205,46 @@ app.post('/api/inventory/:id/fetch-image', async (req, res) => {
     inventory[idx].thumbnail = `/uploads/thumbnails/${filename}`;
     writeInventory(inventory);
     res.json(inventory[idx]);
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
+});
+
+// POST scan a box photo with local moondream model via Ollama
+const memUpload = multer({ storage: multer.memoryStorage(), limits: { fileSize: 20 * 1024 * 1024 } });
+
+app.post('/api/scan-box', memUpload.single('photo'), async (req, res) => {
+  if (!req.file) return res.status(400).json({ error: 'No image provided' });
+  try {
+    const jpegBuffer = await sharp(req.file.buffer).jpeg({ quality: 88 }).toBuffer();
+    const b64 = jpegBuffer.toString('base64');
+
+    const prompt =
+      'This is a Gundam plastic model kit box. ' +
+      'Extract kit details and respond ONLY with a JSON object — no markdown, no explanation. ' +
+      'Fields: "name" (kit name), "grade" (exactly one of: PG MG RG FM HG EG OTHER), ' +
+      '"series" (Gundam series name), "modelNumber" (model number or null). ' +
+      'Example: {"name":"RX-78-2 Gundam","grade":"MG","series":"Mobile Suit Gundam","modelNumber":"RX-78-2"}';
+
+    const body = JSON.stringify({ model: 'moondream', prompt, images: [b64], stream: false });
+
+    const ollamaRes = await new Promise((resolve, reject) => {
+      const req2 = http.request(
+        { hostname: 'localhost', port: 11434, path: '/api/generate', method: 'POST',
+          headers: { 'Content-Type': 'application/json', 'Content-Length': Buffer.byteLength(body) } },
+        r => { let d = ''; r.on('data', c => d += c); r.on('end', () => resolve(d)); }
+      );
+      req2.on('error', reject);
+      req2.write(body);
+      req2.end();
+    });
+
+    const raw = JSON.parse(ollamaRes).response || '';
+    // Extract JSON from the response (moondream sometimes wraps it in text)
+    const match = raw.match(/\{[\s\S]*\}/);
+    if (!match) return res.status(422).json({ error: 'Could not parse kit data from image', raw });
+    const kit = JSON.parse(match[0]);
+    res.json(kit);
   } catch (err) {
     res.status(500).json({ error: err.message });
   }

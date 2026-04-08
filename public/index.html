@@ -72,6 +72,13 @@
       <button class="modal-close" id="add-modal-close">✕</button>
       <div style="padding:2rem;">
         <h2 style="font-size:1.1rem;margin-bottom:1.5rem;color:var(--text);">Add New Model</h2>
+        <div style="margin-bottom:1.25rem;padding:1rem;background:var(--surface2);border-radius:10px;border:1px dashed var(--border);">
+          <div style="font-size:0.8rem;color:var(--text2);margin-bottom:0.6rem;font-weight:600;letter-spacing:0.04em;">SCAN BOX PHOTO</div>
+          <label class="upload-btn" style="display:inline-flex;gap:6px;cursor:pointer;">
+            📷 Choose photo<input type="file" accept="image/*" id="scan-photo-input" style="display:none;" />
+          </label>
+          <div id="scan-status" style="margin-top:0.6rem;font-size:0.82rem;color:var(--text2);display:none;"></div>
+        </div>
         <div class="field-group">
           <label class="field-label">Grade</label>
           <select class="status-select" id="add-grade">

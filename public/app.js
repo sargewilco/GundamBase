@@ -431,9 +431,36 @@ function showToast(msg) {
 
 function openAddModal() {
   ['add-name','add-series','add-model-number','add-notes'].forEach(id => document.getElementById(id).value = '');
+  document.getElementById('scan-photo-input').value = '';
+  document.getElementById('scan-status').style.display = 'none';
   document.getElementById('add-modal-overlay').classList.remove('hidden');
   document.body.style.overflow = 'hidden';
   document.getElementById('add-name').focus();
+}
+
+async function scanBoxPhoto(file) {
+  const status = document.getElementById('scan-status');
+  status.style.display = 'block';
+  status.textContent = 'Scanning... this may take up to 30 seconds.';
+  try {
+    const form = new FormData();
+    form.append('photo', file);
+    const res = await fetch('/api/scan-box', { method: 'POST', body: form });
+    const data = await res.json();
+    if (!res.ok) throw new Error(data.error || 'Scan failed');
+
+    if (data.name) document.getElementById('add-name').value = data.name;
+    if (data.series) document.getElementById('add-series').value = data.series;
+    if (data.modelNumber) document.getElementById('add-model-number').value = data.modelNumber;
+    if (data.grade && document.querySelector(`#add-grade option[value="${data.grade}"]`)) {
+      document.getElementById('add-grade').value = data.grade;
+    }
+    status.textContent = 'Scan complete — review the fields below and adjust if needed.';
+    status.style.color = 'var(--green)';
+  } catch (err) {
+    status.textContent = `Scan failed: ${err.message}`;
+    status.style.color = 'var(--red)';
+  }
 }
 
 function closeAddModal() {
@@ -477,6 +504,11 @@ async function submitAddModel() {
 }
 
 // ── Event Bindings ──
+
+document.getElementById('scan-photo-input').addEventListener('change', e => {
+  const file = e.target.files[0];
+  if (file) scanBoxPhoto(file);
+});
 
 document.getElementById('add-model-btn').addEventListener('click', openAddModal);
 document.getElementById('add-modal-close').addEventListener('click', closeAddModal);
