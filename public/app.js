@@ -431,11 +431,27 @@ function showToast(msg) {
 
 function openAddModal() {
   ['add-name','add-series','add-model-number','add-notes'].forEach(id => document.getElementById(id).value = '');
-  document.getElementById('scan-photo-input').value = '';
-  document.getElementById('scan-status').style.display = 'none';
+  setAddMode('manual');
   document.getElementById('add-modal-overlay').classList.remove('hidden');
   document.body.style.overflow = 'hidden';
   document.getElementById('add-name').focus();
+}
+
+function setAddMode(mode) {
+  const isScan = mode === 'scan';
+  document.getElementById('scan-section').style.display = isScan ? 'block' : 'none';
+  document.getElementById('mode-manual-btn').className = isScan ? 'upload-btn' : 'add-photo-btn';
+  document.getElementById('mode-scan-btn').className = isScan ? 'add-photo-btn' : 'upload-btn';
+  document.getElementById('mode-manual-btn').style.cssText = 'flex:1;font-size:0.85rem;';
+  document.getElementById('mode-scan-btn').style.cssText = 'flex:1;font-size:0.85rem;';
+  resetScanSection();
+}
+
+function resetScanSection() {
+  document.getElementById('scan-photo-input').value = '';
+  document.getElementById('scan-status').style.display = 'none';
+  document.getElementById('scan-status').style.color = 'var(--text2)';
+  document.getElementById('scan-retry-btn').style.display = 'none';
 }
 
 async function scanBoxPhoto(file) {
@@ -461,6 +477,7 @@ async function scanBoxPhoto(file) {
     status.textContent = `Scan failed: ${err.message}`;
     status.style.color = 'var(--red)';
   }
+  document.getElementById('scan-retry-btn').style.display = 'inline';
 }
 
 function closeAddModal() {
@@ -505,10 +522,13 @@ async function submitAddModel() {
 
 // ── Event Bindings ──
 
+document.getElementById('mode-manual-btn').addEventListener('click', () => setAddMode('manual'));
+document.getElementById('mode-scan-btn').addEventListener('click', () => setAddMode('scan'));
 document.getElementById('scan-photo-input').addEventListener('change', e => {
   const file = e.target.files[0];
   if (file) scanBoxPhoto(file);
 });
+document.getElementById('scan-retry-btn').addEventListener('click', () => resetScanSection());
 
 document.getElementById('add-model-btn').addEventListener('click', openAddModal);
 document.getElementById('add-modal-close').addEventListener('click', closeAddModal);

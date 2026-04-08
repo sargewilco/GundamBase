@@ -72,11 +72,15 @@
       <button class="modal-close" id="add-modal-close">✕</button>
       <div style="padding:2rem;">
         <h2 style="font-size:1.1rem;margin-bottom:1.5rem;color:var(--text);">Add New Model</h2>
-        <div style="margin-bottom:1.25rem;padding:1rem;background:var(--surface2);border-radius:10px;border:1px dashed var(--border);">
-          <div style="font-size:0.8rem;color:var(--text2);margin-bottom:0.6rem;font-weight:600;letter-spacing:0.04em;">SCAN BOX PHOTO</div>
+        <div style="display:flex;gap:8px;margin-bottom:1.25rem;">
+          <button id="mode-manual-btn" class="add-photo-btn" style="flex:1;font-size:0.85rem;">Manual Entry</button>
+          <button id="mode-scan-btn" class="upload-btn" style="flex:1;font-size:0.85rem;">📷 Scan Box Photo</button>
+        </div>
+        <div id="scan-section" style="margin-bottom:1.25rem;padding:1rem;background:var(--surface2);border-radius:10px;border:1px dashed var(--border);display:none;">
           <label class="upload-btn" style="display:inline-flex;gap:6px;cursor:pointer;">
-            📷 Choose photo<input type="file" accept="image/*" id="scan-photo-input" style="display:none;" />
+            Choose photo<input type="file" accept="image/*" id="scan-photo-input" style="display:none;" />
           </label>
+          <button id="scan-retry-btn" style="display:none;margin-left:8px;background:none;border:none;color:var(--text2);font-size:0.82rem;cursor:pointer;text-decoration:underline;">Try another</button>
           <div id="scan-status" style="margin-top:0.6rem;font-size:0.82rem;color:var(--text2);display:none;"></div>
         </div>
         <div class="field-group">
