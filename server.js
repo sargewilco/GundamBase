@@ -215,8 +215,11 @@ const memUpload = multer({ storage: multer.memoryStorage(), limits: { fileSize: 
 
 app.post('/api/scan-box', memUpload.single('photo'), async (req, res) => {
   if (!req.file) return res.status(400).json({ error: 'No image provided' });
+  const tmpPath = path.join(UPLOADS_DIR, `scan-tmp-${Date.now()}`);
   try {
-    const jpegBuffer = await sharp(req.file.buffer).resize(512, 512, { fit: 'inside' }).jpeg({ quality: 85 }).toBuffer();
+    fs.writeFileSync(tmpPath, req.file.buffer);
+    const jpegBuffer = await sharp(tmpPath).resize(512, 512, { fit: 'inside' }).jpeg({ quality: 85 }).toBuffer();
+    fs.unlinkSync(tmpPath);
     const b64 = jpegBuffer.toString('base64');
 
     const prompt =
@@ -246,6 +249,7 @@ app.post('/api/scan-box', memUpload.single('photo'), async (req, res) => {
     const kit = JSON.parse(match[0]);
     res.json(kit);
   } catch (err) {
+    if (fs.existsSync(tmpPath)) fs.unlinkSync(tmpPath);
     res.status(500).json({ error: err.message });
   }
 });
