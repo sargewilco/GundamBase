@@ -216,7 +216,7 @@ const memUpload = multer({ storage: multer.memoryStorage(), limits: { fileSize: 
 app.post('/api/scan-box', memUpload.single('photo'), async (req, res) => {
   if (!req.file) return res.status(400).json({ error: 'No image provided' });
   try {
-    const jpegBuffer = await sharp(req.file.buffer).jpeg({ quality: 88 }).toBuffer();
+    const jpegBuffer = await sharp(req.file.buffer).resize(512, 512, { fit: 'inside' }).jpeg({ quality: 85 }).toBuffer();
     const b64 = jpegBuffer.toString('base64');
 
     const prompt =
