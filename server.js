@@ -48,6 +48,50 @@ app.get('/api/inventory', (req, res) => {
   res.json(readInventory());
 });
 
+// GET public inventory page (AI-readable)
+app.get('/kits', (req, res) => {
+  const inventory = readInventory();
+  const gradeOrder = ['PG', 'MG', 'RG', 'FM', 'HG', 'EG', 'OTHER'];
+  const gradeLabels = { PG: 'Perfect Grade', MG: 'Master Grade', RG: 'Real Grade', FM: 'Full Mechanics', HG: 'High Grade', EG: 'Entry Grade', OTHER: 'Other' };
+  const statusLabel = s => s === 'in-progress' ? 'In Progress' : s.charAt(0).toUpperCase() + s.slice(1);
+
+  const sections = gradeOrder
+    .filter(g => inventory.some(m => m.grade === g))
+    .map(g => {
+      const kits = inventory.filter(m => m.grade === g);
+      const rows = kits.map(m => {
+        const parts = [m.name, m.series];
+        if (m.modelNumber) parts.push(m.modelNumber);
+        parts.push(statusLabel(m.status));
+        return `<li>${parts.join(' · ')}</li>`;
+      }).join('\n');
+      return `<h2>${g} — ${gradeLabels[g]} (${kits.length})</h2>\n<ul>\n${rows}\n</ul>`;
+    }).join('\n\n');
+
+  res.setHeader('Content-Type', 'text/html; charset=utf-8');
+  res.send(`<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>GundamBase Inventory</title>
+<style>
+  body { font-family: sans-serif; max-width: 700px; margin: 2rem auto; padding: 0 1rem; color: #222; }
+  h1 { font-size: 1.4rem; margin-bottom: 0.25rem; }
+  p.meta { color: #666; font-size: 0.9rem; margin-bottom: 2rem; }
+  h2 { font-size: 1rem; margin: 1.5rem 0 0.4rem; border-bottom: 1px solid #ddd; padding-bottom: 4px; }
+  ul { list-style: none; padding: 0; margin: 0; }
+  li { padding: 3px 0; font-size: 0.9rem; }
+</style>
+</head>
+<body>
+<h1>GundamBase Inventory</h1>
+<p class="meta">${inventory.length} kits total · Last updated ${new Date().toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' })}</p>
+${sections}
+</body>
+</html>`);
+});
+
 // POST add new model
 app.post('/api/inventory', (req, res) => {
   const { grade, name, series, modelNumber, notes } = req.body;
