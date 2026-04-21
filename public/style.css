@@ -606,6 +606,14 @@ main { max-width: 1400px; margin: 0 auto; padding: 1.5rem; }
     border-radius: 20px 20px 0 0;
     max-height: 92vh;
     border-bottom: none;
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+  }
+  #modal-content, .modal-body {
+    overflow-y: auto;
+    flex: 1;
+    -webkit-overflow-scrolling: touch;
   }
   .modal-top { grid-template-columns: 1fr; gap: 1rem; }
 
