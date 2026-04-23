@@ -1,4 +1,5 @@
 node_modules/
+ecosystem.config.js
 .claude/
 public/uploads/thumbnails/
 public/uploads/builds/

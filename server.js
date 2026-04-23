@@ -3,9 +3,11 @@ const multer = require('multer');
 const path = require('path');
 const fs = require('fs');
 const https = require('https');
-const http = require('http');
 const sharp = require('sharp');
 const heicConvert = require('heic-convert');
+const Anthropic = require('@anthropic-ai/sdk');
+
+const anthropic = new Anthropic();
 
 const app = express();
 const PORT = 3000;
@@ -255,50 +257,59 @@ app.post('/api/inventory/:id/fetch-image', async (req, res) => {
   }
 });
 
-// POST scan a box photo with local moondream model via Ollama
+// POST scan a box photo with Claude Vision
 const memUpload = multer({ storage: multer.memoryStorage(), limits: { fileSize: 20 * 1024 * 1024 } });
 
 app.post('/api/scan-box', memUpload.single('photo'), async (req, res) => {
   if (!req.file) return res.status(400).json({ error: 'No image provided' });
   const tmpPath = path.join(UPLOADS_DIR, `scan-tmp-${Date.now()}`);
   try {
+    console.log('[scan-box] received file:', req.file.originalname, req.file.mimetype, req.file.size, 'bytes');
     const isHeic = /heic|heif/i.test(req.file.mimetype) || /\.heic$/i.test(req.file.originalname);
     let sourceBuffer = req.file.buffer;
     if (isHeic) {
+      console.log('[scan-box] converting HEIC to JPEG');
       sourceBuffer = Buffer.from(await heicConvert({ buffer: sourceBuffer, format: 'JPEG', quality: 0.85 }));
     }
     fs.writeFileSync(tmpPath, sourceBuffer);
-    const jpegBuffer = await sharp(tmpPath).resize(512, 512, { fit: 'inside' }).jpeg({ quality: 85 }).toBuffer();
+    const jpegBuffer = await sharp(tmpPath).resize(1024, 1024, { fit: 'inside' }).jpeg({ quality: 88 }).toBuffer();
     fs.unlinkSync(tmpPath);
     const b64 = jpegBuffer.toString('base64');
+    console.log('[scan-box] image prepared, sending to Claude (%d bytes base64)', b64.length);
 
-    const prompt =
-      'This is a Gundam plastic model kit box. ' +
-      'Extract kit details and respond ONLY with a JSON object — no markdown, no explanation. ' +
-      'Fields: "name" (kit name), "grade" (exactly one of: PG MG RG FM HG EG OTHER), ' +
-      '"series" (Gundam series name), "modelNumber" (model number or null). ' +
-      'Example: {"name":"RX-78-2 Gundam","grade":"MG","series":"Mobile Suit Gundam","modelNumber":"RX-78-2"}';
-
-    const body = JSON.stringify({ model: 'moondream', prompt, images: [b64], stream: false });
-
-    const ollamaRes = await new Promise((resolve, reject) => {
-      const req2 = http.request(
-        { hostname: 'localhost', port: 11434, path: '/api/generate', method: 'POST',
-          headers: { 'Content-Type': 'application/json', 'Content-Length': Buffer.byteLength(body) } },
-        r => { let d = ''; r.on('data', c => d += c); r.on('end', () => resolve(d)); }
-      );
-      req2.on('error', reject);
-      req2.write(body);
-      req2.end();
+    const message = await anthropic.messages.create({
+      model: 'claude-haiku-4-5',
+      max_tokens: 1024,
+      tools: [{
+        name: 'extract_kit_info',
+        description: 'Extract Gundam model kit details visible on the box',
+        input_schema: {
+          type: 'object',
+          properties: {
+            name: { type: 'string', description: 'Kit name as printed on box (e.g. "Nu Gundam Ver.Ka")' },
+            grade: { type: 'string', enum: ['PG', 'MG', 'RG', 'FM', 'HG', 'EG', 'OTHER'], description: 'Grade abbreviation shown on box' },
+            series: { type: 'string', description: 'Gundam series name (e.g. "Char\'s Counterattack")' },
+            modelNumber: { type: 'string', description: 'Model number from box (e.g. "RX-93"), empty string if not visible' }
+          },
+          required: ['name', 'grade', 'series', 'modelNumber']
+        }
+      }],
+      tool_choice: { type: 'tool', name: 'extract_kit_info' },
+      messages: [{
+        role: 'user',
+        content: [
+          { type: 'image', source: { type: 'base64', media_type: 'image/jpeg', data: b64 } },
+          { type: 'text', text: 'Examine this Gundam model kit box carefully and extract the kit details from the text and markings visible on the box.' }
+        ]
+      }]
     });
 
-    const raw = JSON.parse(ollamaRes).response || '';
-    // Extract JSON from the response (moondream sometimes wraps it in text)
-    const match = raw.match(/\{[\s\S]*\}/);
-    if (!match) return res.status(422).json({ error: 'Could not parse kit data from image', raw });
-    const kit = JSON.parse(match[0]);
+    const toolBlock = message.content.find(b => b.type === 'tool_use');
+    console.log('[scan-box] Claude response:', JSON.stringify(toolBlock.input));
+    const kit = { ...toolBlock.input, modelNumber: toolBlock.input.modelNumber || null };
     res.json(kit);
   } catch (err) {
+    console.error('[scan-box] error:', err.message);
     if (fs.existsSync(tmpPath)) fs.unlinkSync(tmpPath);
     res.status(500).json({ error: err.message });
   }
