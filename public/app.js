@@ -482,6 +482,7 @@ function startScanConsole() {
     box.appendChild(line);
   }
   addLine();
+  box.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
   window._scanInterval = setInterval(addLine, 900);
 }
 
