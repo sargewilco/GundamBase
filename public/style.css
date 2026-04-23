@@ -654,3 +654,44 @@ main { max-width: 1400px; margin: 0 auto; padding: 1.5rem; }
   }
   .mobile-nav-add:hover { opacity: 0.9; }
 }
+
+/* ── Scan Console ── */
+.scan-console {
+  background: #080b10;
+  border: 1px solid #1e2d40;
+  border-radius: 8px;
+  padding: 10px 14px;
+  font-family: 'Courier New', Courier, monospace;
+  font-size: 0.78rem;
+  max-height: 130px;
+  overflow: hidden;
+  position: relative;
+}
+.scan-console::before {
+  content: '● ● ●';
+  display: block;
+  color: #2a3a4a;
+  font-size: 0.6rem;
+  letter-spacing: 4px;
+  margin-bottom: 8px;
+}
+.scan-console-line {
+  color: #3ecf8e;
+  line-height: 1.7;
+  opacity: 0;
+  animation: scanLineFade 0.25s ease forwards;
+}
+.scan-console-line::before { content: '> '; color: #2a6a4a; }
+.scan-console-line:last-child::after {
+  content: '▌';
+  margin-left: 2px;
+  animation: scanBlink 1s step-end infinite;
+}
+@keyframes scanLineFade {
+  from { opacity: 0; transform: translateY(3px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+@keyframes scanBlink {
+  0%, 100% { opacity: 1; }
+  50%       { opacity: 0; }
+}

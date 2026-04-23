@@ -449,15 +449,52 @@ function setAddMode(mode) {
 
 function resetScanSection() {
   document.getElementById('scan-photo-input').value = '';
-  document.getElementById('scan-status').style.display = 'none';
-  document.getElementById('scan-status').style.color = 'var(--text2)';
+  const status = document.getElementById('scan-status');
+  status.style.display = 'none';
+  status.style.color = 'var(--text2)';
+  status.innerHTML = '';
   document.getElementById('scan-retry-btn').style.display = 'none';
+  if (window._scanInterval) { clearInterval(window._scanInterval); window._scanInterval = null; }
+}
+
+const SCAN_MESSAGES = [
+  'Uploading image to Claude Vision...',
+  'Analyzing box art...',
+  'Identifying kit grade...',
+  'Reading model number...',
+  'Extracting series info...',
+  'Cross-referencing kit data...',
+  'Finalizing results...',
+];
+
+function startScanConsole() {
+  const status = document.getElementById('scan-status');
+  status.style.display = 'block';
+  status.style.color = '';
+  status.innerHTML = '<div class="scan-console" id="scan-console-box"></div>';
+  const box = document.getElementById('scan-console-box');
+  let i = 0;
+  function addLine() {
+    if (i >= SCAN_MESSAGES.length) return;
+    const line = document.createElement('div');
+    line.className = 'scan-console-line';
+    line.textContent = SCAN_MESSAGES[i++];
+    box.appendChild(line);
+  }
+  addLine();
+  window._scanInterval = setInterval(addLine, 900);
+}
+
+function stopScanConsole(success, message) {
+  if (window._scanInterval) { clearInterval(window._scanInterval); window._scanInterval = null; }
+  const status = document.getElementById('scan-status');
+  status.innerHTML = '';
+  status.textContent = message;
+  status.style.color = success ? 'var(--green)' : 'var(--red)';
 }
 
 async function scanBoxPhoto(file) {
-  const status = document.getElementById('scan-status');
-  status.style.display = 'block';
-  status.textContent = 'Scanning... this may take up to 30 seconds.';
+  startScanConsole();
   try {
     const form = new FormData();
     form.append('photo', file);
@@ -471,11 +508,9 @@ async function scanBoxPhoto(file) {
     if (data.grade && document.querySelector(`#add-grade option[value="${data.grade}"]`)) {
       document.getElementById('add-grade').value = data.grade;
     }
-    status.textContent = 'Scan complete — review the fields below and adjust if needed.';
-    status.style.color = 'var(--green)';
+    stopScanConsole(true, 'Scan complete — review the fields below and adjust if needed.');
   } catch (err) {
-    status.textContent = `Scan failed: ${err.message}`;
-    status.style.color = 'var(--red)';
+    stopScanConsole(false, `Scan failed: ${err.message}`);
   }
   document.getElementById('scan-retry-btn').style.display = 'inline';
 }
