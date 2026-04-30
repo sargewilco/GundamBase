@@ -626,4 +626,21 @@ document.getElementById('search-clear').addEventListener('click', () => {
   await fetchInventory();
   renderStats();
   renderGrades();
+
+  const promoteData = sessionStorage.getItem('promoteKit');
+  if (promoteData) {
+    sessionStorage.removeItem('promoteKit');
+    try {
+      const kit = JSON.parse(promoteData);
+      openAddModal();
+      if (kit.grade && document.querySelector(`#add-grade option[value="${kit.grade}"]`)) {
+        document.getElementById('add-grade').value = kit.grade;
+      }
+      if (kit.name) document.getElementById('add-name').value = kit.name;
+      if (kit.series) document.getElementById('add-series').value = kit.series;
+      if (kit.modelNumber) document.getElementById('add-model-number').value = kit.modelNumber;
+      if (kit.notes) document.getElementById('add-notes').value = kit.notes;
+      showToast('Promoted from wishlist — review and add to inventory!');
+    } catch {}
+  }
 })();

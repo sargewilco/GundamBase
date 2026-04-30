@@ -3,84 +3,67 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Kit Keeper</title>
+  <title>Wishlist — Kit Keeper</title>
   <link rel="stylesheet" href="style.css" />
 </head>
 <body>
   <header>
     <div class="header-inner">
-      <div class="logo">
+      <a href="/" class="logo" style="text-decoration:none;color:inherit;">
         <span class="logo-symbol">⬡</span>
         <span class="logo-text">KIT<span>KEEPER</span></span>
-      </div>
+      </a>
       <div class="header-stats" id="header-stats"></div>
       <div class="header-actions">
-        <button class="icon-btn" id="stats-toggle-btn" title="Stats">📊</button>
-        <a href="/wishlist" class="icon-btn" title="Wishlist" style="text-decoration:none;font-size:1rem;">♡</a>
-        <button class="add-model-btn" id="add-model-btn">+ Add</button>
-        <a href="/" class="back-home">← tomcannon.com</a>
+        <a href="/" class="icon-btn" title="Collection" style="text-decoration:none;font-size:0.78rem;font-weight:700;letter-spacing:0.04em;width:auto;padding:0 12px;">⬡ Collection</a>
+        <button class="add-model-btn" id="add-wish-btn">♡ Add</button>
       </div>
     </div>
   </header>
 
   <main>
-    <section id="stats-panel" class="stats-panel hidden"></section>
-
-    <div id="collection-view">
-      <div class="controls">
-        <div class="search-bar-wrap">
-          <span class="search-icon">🔍</span>
-          <input type="search" id="search-input" class="search-input" placeholder="Search kits…" autocomplete="off" />
-          <button class="search-clear hidden" id="search-clear">✕</button>
+    <div class="controls" style="justify-content:flex-start;">
+      <div class="filter-scroll">
+        <div class="filter-tabs" id="priority-tabs">
+          <button class="tab active" data-priority="ALL">All</button>
+          <button class="tab priority-tab-high" data-priority="high">High</button>
+          <button class="tab priority-tab-medium" data-priority="medium">Medium</button>
+          <button class="tab priority-tab-low" data-priority="low">Low</button>
         </div>
-        <div class="filter-scroll"><div class="filter-tabs" id="grade-tabs">
-          <button class="tab active" data-grade="ALL">All</button>
-          <button class="tab" data-grade="PG">PG</button>
-          <button class="tab" data-grade="MG">MG</button>
-          <button class="tab" data-grade="RG">RG</button>
-          <button class="tab" data-grade="FM">FM</button>
-          <button class="tab" data-grade="HG">HG</button>
-          <button class="tab" data-grade="EG">EG</button>
-          <button class="tab" data-grade="OTHER">Other</button>
-        </div></div>
-        <div class="filter-scroll"><div class="status-filters">
-          <button class="status-btn active" data-status="ALL">All</button>
-          <button class="status-btn" data-status="backlog">Backlog</button>
-          <button class="status-btn" data-status="in-progress">In Progress</button>
-          <button class="status-btn" data-status="complete">Complete</button>
-        </div></div>
       </div>
-      <div id="grade-sections"></div>
+    </div>
+    <div id="wishlist-grid" class="model-grid"></div>
+    <div id="wishlist-empty" class="wishlist-empty hidden">
+      <span class="wishlist-empty-icon">♡</span>
+      <p>Your wishlist is empty</p>
+      <p class="wishlist-empty-sub">Tap ♡ Add to scan a kit box or product listing</p>
     </div>
   </main>
 
   <!-- Mobile bottom nav -->
   <nav class="mobile-nav">
-    <button class="mobile-nav-btn active" data-view="collection">
+    <a href="/" class="mobile-nav-btn" style="text-decoration:none;">
       <span>⬡</span><span class="mobile-nav-label">Collection</span>
-    </button>
+    </a>
     <button class="mobile-nav-btn mobile-nav-add" id="mobile-add-btn">
       <span>＋</span>
     </button>
-    <a href="/wishlist" class="mobile-nav-btn" style="text-decoration:none;">
+    <button class="mobile-nav-btn active">
       <span>♡</span><span class="mobile-nav-label">Wishlist</span>
-    </a>
-    <button class="mobile-nav-btn" data-view="stats">
-      <span>📊</span><span class="mobile-nav-label">Stats</span>
     </button>
   </nav>
 
-  <!-- Add Model Modal -->
+  <!-- Add Wishlist Item Modal -->
   <div id="add-modal-overlay" class="modal-overlay hidden">
     <div class="modal" style="max-width:520px;">
       <button class="modal-close" id="add-modal-close">✕</button>
       <div class="modal-body" style="padding:2rem;">
-        <h2 style="font-size:1.1rem;margin-bottom:1.5rem;color:var(--text);">Add New Model</h2>
+        <h2 style="font-size:1.1rem;margin-bottom:1.5rem;color:var(--text);">Add to Wishlist</h2>
         <div style="display:flex;gap:8px;margin-bottom:1.25rem;">
           <button id="mode-manual-btn" class="add-photo-btn" style="flex:1;font-size:0.85rem;">Manual Entry</button>
-          <button id="mode-scan-btn" class="upload-btn" style="flex:1;font-size:0.85rem;">📷 Scan Box Photo</button>
+          <button id="mode-scan-btn" class="upload-btn" style="flex:1;font-size:0.85rem;">📷 Scan Photo</button>
         </div>
-        <div id="scan-section" style="margin-bottom:1.25rem;padding:1rem;background:var(--surface2);border-radius:10px;border:1px dashed var(--border);display:none;">
+        <div id="scan-section" style="margin-bottom:1.25rem;padding:1rem;background:var(--bg3);border-radius:10px;border:1px dashed var(--border);display:none;">
           <label class="upload-btn" style="display:inline-flex;gap:6px;cursor:pointer;">
             Choose photo<input type="file" accept="image/*" id="scan-photo-input" style="display:none;" />
           </label>
@@ -101,15 +84,27 @@
         </div>
         <div class="field-group">
           <label class="field-label">Name <span style="color:var(--red)">*</span></label>
-          <input class="notes-input" style="min-height:unset;padding:8px 12px;" id="add-name" placeholder="e.g. RX-78-2 Gundam Ver. 3.0" />
+          <input class="notes-input" style="min-height:unset;padding:8px 12px;" id="add-name" placeholder="e.g. Nu Gundam Ver.Ka" />
         </div>
         <div class="field-group">
           <label class="field-label">Series <span style="color:var(--red)">*</span></label>
-          <input class="notes-input" style="min-height:unset;padding:8px 12px;" id="add-series" placeholder="e.g. Mobile Suit Gundam" />
+          <input class="notes-input" style="min-height:unset;padding:8px 12px;" id="add-series" placeholder="e.g. Char's Counterattack" />
         </div>
         <div class="field-group">
           <label class="field-label">Model Number</label>
-          <input class="notes-input" style="min-height:unset;padding:8px 12px;" id="add-model-number" placeholder="e.g. RX-78-2 (optional)" />
+          <input class="notes-input" style="min-height:unset;padding:8px 12px;" id="add-model-number" placeholder="e.g. RX-93 (optional)" />
+        </div>
+        <div class="field-group">
+          <label class="field-label">Source / Retailer</label>
+          <input class="notes-input" style="min-height:unset;padding:8px 12px;" id="add-source" placeholder="e.g. Amazon, Gundam Planet" />
+        </div>
+        <div class="field-group">
+          <label class="field-label">Priority</label>
+          <select class="status-select" id="add-priority">
+            <option value="high">🔴 High</option>
+            <option value="medium" selected>🟡 Medium</option>
+            <option value="low">🔵 Low</option>
+          </select>
         </div>
         <div class="field-group">
           <label class="field-label">Notes</label>
@@ -120,21 +115,21 @@
           <label for="add-fetch-image" style="font-size:0.82rem;color:var(--text2);cursor:pointer;">Auto-fetch thumbnail from wiki</label>
         </div>
         <div style="display:flex;gap:10px;margin-top:1.5rem;">
-          <button class="add-photo-btn" id="add-submit-btn" style="flex:1;">Add to Inventory</button>
+          <button class="add-photo-btn" id="add-submit-btn" style="flex:1;">Add to Wishlist</button>
           <button class="upload-btn" id="add-cancel-btn" style="width:auto;padding-left:1.25rem;padding-right:1.25rem;">Cancel</button>
         </div>
       </div>
     </div>
   </div>
 
-  <!-- Model Detail Modal -->
-  <div id="modal-overlay" class="modal-overlay hidden">
-    <div class="modal">
-      <button class="modal-close" id="modal-close">✕</button>
-      <div class="modal-content" id="modal-content"></div>
+  <!-- Item Detail Modal -->
+  <div id="item-modal-overlay" class="modal-overlay hidden">
+    <div class="modal" style="max-width:520px;">
+      <button class="modal-close" id="item-modal-close">✕</button>
+      <div id="item-modal-content" class="modal-content"></div>
     </div>
   </div>
 
-  <script src="app.js"></script>
+  <script src="wishlist.js"></script>
 </body>
 </html>
