@@ -696,6 +696,26 @@ main { max-width: 1400px; margin: 0 auto; padding: 1.5rem; }
   50%       { opacity: 0; }
 }
 
+/* ── Wishlist nav button (desktop header) ── */
+.wishlist-nav-btn {
+  padding: 7px 14px;
+  background: none;
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  color: var(--text2);
+  font-size: 0.82rem;
+  font-weight: 700;
+  letter-spacing: 0.04em;
+  cursor: pointer;
+  transition: all 0.15s;
+  white-space: nowrap;
+  display: flex;
+  align-items: center;
+  gap: 5px;
+}
+.wishlist-nav-btn:hover { border-color: var(--accent2); color: var(--accent2); }
+@media (max-width: 700px) { .wishlist-nav-btn { display: none; } }
+
 /* ── Priority Badges ── */
 .priority-badge {
   display: inline-flex;
