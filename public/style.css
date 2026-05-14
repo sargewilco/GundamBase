@@ -484,6 +484,13 @@ main { max-width: 1400px; margin: 0 auto; padding: 1.5rem; }
 }
 .upload-btn:hover { border-color: var(--accent); color: var(--accent); }
 .upload-btn input[type="file"] { display: none; }
+.wiki-link {
+  display: block; text-align: center;
+  font-size: 0.75rem; color: var(--text3);
+  text-decoration: none; padding: 5px 0;
+  transition: color 0.15s;
+}
+.wiki-link:hover { color: var(--accent); }
 .modal-grade-row { display: flex; align-items: center; gap: 10px; margin-bottom: 10px; }
 .field-group { margin-bottom: 12px; }
 .field-label {

@@ -265,6 +265,7 @@ app.post('/api/inventory/:id/fetch-image', async (req, res) => {
 
     await downloadFile(imageUrl, dest);
     inventory[idx].thumbnail = `/uploads/thumbnails/${filename}`;
+    inventory[idx].wikiTitle = decodeURIComponent(title);
     writeInventory(inventory);
     res.json(inventory[idx]);
   } catch (err) {
@@ -457,6 +458,7 @@ app.post('/api/wishlist/:id/fetch-image', async (req, res) => {
 
     await downloadFile(imageUrl, dest);
     wishlist[idx].thumbnail = `/uploads/thumbnails/${filename}`;
+    wishlist[idx].wikiTitle = decodeURIComponent(title);
     writeWishlist(wishlist);
     res.json(wishlist[idx]);
   } catch (err) {

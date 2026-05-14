@@ -260,6 +260,7 @@ function renderModal(model) {
         <div class="modal-thumb">${thumbHtml}</div>
         <label class="upload-btn">📷 Upload thumbnail<input type="file" accept="image/*" id="thumb-upload" /></label>
         <button class="upload-btn" id="fetch-image-btn" style="margin-top:6px;">🔍 Auto-fetch from wiki</button>
+        ${model.wikiTitle ? `<a href="https://gundam.fandom.com/wiki/${encodeURIComponent(model.wikiTitle)}" target="_blank" rel="noopener" class="wiki-link">↗ View on Gundam Wiki</a>` : ''}
       </div>
       <div class="modal-info">
         <div class="modal-grade-row">
