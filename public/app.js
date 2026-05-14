@@ -241,6 +241,12 @@ function closeModal() {
   openModelId = null;
 }
 
+function wikiUrl(model) {
+  return model.wikiTitle
+    ? `https://gundam.fandom.com/wiki/${encodeURIComponent(model.wikiTitle)}`
+    : `https://gundam.fandom.com/wiki/Special:Search?query=${encodeURIComponent(model.name)}&scope=internal&ns0=1`;
+}
+
 function renderModal(model) {
   const thumbHtml = model.thumbnail
     ? `<img src="${model.thumbnail}" alt="${model.name}" class="modal-thumb-zoomable" data-src="${model.thumbnail}" />`
@@ -260,7 +266,7 @@ function renderModal(model) {
         <div class="modal-thumb">${thumbHtml}</div>
         <label class="upload-btn">📷 Upload thumbnail<input type="file" accept="image/*" id="thumb-upload" /></label>
         <button class="upload-btn" id="fetch-image-btn" style="margin-top:6px;">🔍 Auto-fetch from wiki</button>
-        ${model.wikiTitle ? `<a href="https://gundam.fandom.com/wiki/${encodeURIComponent(model.wikiTitle)}" target="_blank" rel="noopener" class="wiki-link">↗ View on Gundam Wiki</a>` : ''}
+        <a href="${wikiUrl(model)}" target="_blank" rel="noopener" class="wiki-link">↗ ${model.wikiTitle ? 'View on Gundam Wiki' : 'Search Gundam Wiki'}</a>
       </div>
       <div class="modal-info">
         <div class="modal-grade-row">

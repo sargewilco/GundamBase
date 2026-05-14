@@ -247,25 +247,27 @@ app.post('/api/inventory/:id/fetch-image', async (req, res) => {
       if (!results?.length) return res.status(404).json({ error: 'Not found on wiki' });
       title = encodeURIComponent(results[0].title);
     }
-    const imgData = await wikiGet('gundam.fandom.com',
-      `/api.php?action=query&prop=pageimages&titles=${title}&format=json&pithumbsize=600&redirects=1`);
-    const page = Object.values(imgData?.query?.pages ?? {})[0];
-    const imageUrl = page?.thumbnail?.source;
-    if (!imageUrl) return res.status(404).json({ error: 'No image on wiki page' });
+    inventory[idx].wikiTitle = decodeURIComponent(title);
 
-    const ext = imageUrl.match(/\.(jpe?g|png|gif|webp)/i)?.[1] ?? 'jpg';
-    const filename = `${model.id}-auto.${ext}`;
-    const dest = path.join(UPLOADS_DIR, 'thumbnails', filename);
-
-    // Remove old auto-fetched file if present
-    if (inventory[idx].thumbnail?.includes('-auto.')) {
-      const oldPath = path.join(__dirname, 'public', inventory[idx].thumbnail);
-      if (fs.existsSync(oldPath)) fs.unlinkSync(oldPath);
+    const hasCustomThumb = inventory[idx].thumbnail && !inventory[idx].thumbnail.includes('-auto.');
+    if (!hasCustomThumb) {
+      const imgData = await wikiGet('gundam.fandom.com',
+        `/api.php?action=query&prop=pageimages&titles=${title}&format=json&pithumbsize=600&redirects=1`);
+      const page = Object.values(imgData?.query?.pages ?? {})[0];
+      const imageUrl = page?.thumbnail?.source;
+      if (imageUrl) {
+        const ext = imageUrl.match(/\.(jpe?g|png|gif|webp)/i)?.[1] ?? 'jpg';
+        const filename = `${model.id}-auto.${ext}`;
+        const dest = path.join(UPLOADS_DIR, 'thumbnails', filename);
+        if (inventory[idx].thumbnail?.includes('-auto.')) {
+          const oldPath = path.join(__dirname, 'public', inventory[idx].thumbnail);
+          if (fs.existsSync(oldPath)) fs.unlinkSync(oldPath);
+        }
+        await downloadFile(imageUrl, dest);
+        inventory[idx].thumbnail = `/uploads/thumbnails/${filename}`;
+      }
     }
 
-    await downloadFile(imageUrl, dest);
-    inventory[idx].thumbnail = `/uploads/thumbnails/${filename}`;
-    inventory[idx].wikiTitle = decodeURIComponent(title);
     writeInventory(inventory);
     res.json(inventory[idx]);
   } catch (err) {
@@ -441,24 +443,27 @@ app.post('/api/wishlist/:id/fetch-image', async (req, res) => {
       if (!results?.length) return res.status(404).json({ error: 'Not found on wiki' });
       title = encodeURIComponent(results[0].title);
     }
-    const imgData = await wikiGet('gundam.fandom.com',
-      `/api.php?action=query&prop=pageimages&titles=${title}&format=json&pithumbsize=600&redirects=1`);
-    const page = Object.values(imgData?.query?.pages ?? {})[0];
-    const imageUrl = page?.thumbnail?.source;
-    if (!imageUrl) return res.status(404).json({ error: 'No image on wiki page' });
+    wishlist[idx].wikiTitle = decodeURIComponent(title);
 
-    const ext = imageUrl.match(/\.(jpe?g|png|gif|webp)/i)?.[1] ?? 'jpg';
-    const filename = `${model.id}-auto.${ext}`;
-    const dest = path.join(UPLOADS_DIR, 'thumbnails', filename);
-
-    if (wishlist[idx].thumbnail?.includes('-auto.')) {
-      const oldPath = path.join(__dirname, 'public', wishlist[idx].thumbnail);
-      if (fs.existsSync(oldPath)) fs.unlinkSync(oldPath);
+    const hasCustomThumb = wishlist[idx].thumbnail && !wishlist[idx].thumbnail.includes('-auto.');
+    if (!hasCustomThumb) {
+      const imgData = await wikiGet('gundam.fandom.com',
+        `/api.php?action=query&prop=pageimages&titles=${title}&format=json&pithumbsize=600&redirects=1`);
+      const page = Object.values(imgData?.query?.pages ?? {})[0];
+      const imageUrl = page?.thumbnail?.source;
+      if (imageUrl) {
+        const ext = imageUrl.match(/\.(jpe?g|png|gif|webp)/i)?.[1] ?? 'jpg';
+        const filename = `${model.id}-auto.${ext}`;
+        const dest = path.join(UPLOADS_DIR, 'thumbnails', filename);
+        if (wishlist[idx].thumbnail?.includes('-auto.')) {
+          const oldPath = path.join(__dirname, 'public', wishlist[idx].thumbnail);
+          if (fs.existsSync(oldPath)) fs.unlinkSync(oldPath);
+        }
+        await downloadFile(imageUrl, dest);
+        wishlist[idx].thumbnail = `/uploads/thumbnails/${filename}`;
+      }
     }
 
-    await downloadFile(imageUrl, dest);
-    wishlist[idx].thumbnail = `/uploads/thumbnails/${filename}`;
-    wishlist[idx].wikiTitle = decodeURIComponent(title);
     writeWishlist(wishlist);
     res.json(wishlist[idx]);
   } catch (err) {
