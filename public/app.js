@@ -156,6 +156,56 @@ function setView(view) {
   if (isStats) renderStatsPanel();
 }
 
+// ── Hero Banner ──
+
+function renderHero() {
+  const section = document.getElementById('hero-section');
+  const inProgress = inventory.filter(m => m.status === 'in-progress');
+
+  // Hide if filtering to a status that excludes in-progress
+  if (!inProgress.length || (activeStatus !== 'ALL' && activeStatus !== 'in-progress')) {
+    section.innerHTML = '';
+    return;
+  }
+
+  // Only spotlight kits that pass the active grade + search filters
+  const visible = inProgress.filter(m => {
+    const gradeMatch = activeGrade === 'ALL' || m.grade === activeGrade;
+    const q = searchQuery.toLowerCase();
+    const searchMatch = !q || m.name.toLowerCase().includes(q) || m.series.toLowerCase().includes(q);
+    return gradeMatch && searchMatch;
+  });
+
+  if (!visible.length) { section.innerHTML = ''; return; }
+
+  section.innerHTML = visible.map(kit => {
+    const thumb = kit.thumbnail
+      ? `<img src="${kit.thumbnail}" alt="${kit.name}" />`
+      : `<div class="hero-image-empty"><span>🤖</span></div>`;
+    return `
+      <div class="hero-banner" data-id="${kit.id}" data-grade="${kit.grade}">
+        <div class="hero-label"><span class="hero-pulse"></span>Currently Building</div>
+        <div class="hero-inner">
+          <div class="hero-image">${thumb}</div>
+          <div class="hero-info">
+            <div class="hero-badge-row">
+              <span class="grade-badge badge-${kit.grade}">${kit.grade}</span>
+              <span class="card-status status-in-progress">In Progress</span>
+            </div>
+            <h2 class="hero-name">${kit.name}</h2>
+            <p class="hero-series">${kit.series}${kit.modelNumber ? ` · ${kit.modelNumber}` : ''}</p>
+            ${kit.notes ? `<div class="hero-notes">${kit.notes}</div>` : ''}
+            <button class="add-photo-btn hero-cta">View Details →</button>
+          </div>
+        </div>
+      </div>`;
+  }).join('');
+
+  section.querySelectorAll('.hero-banner').forEach(el => {
+    el.addEventListener('click', () => openModal(el.dataset.id));
+  });
+}
+
 // ── Collection ──
 
 function getFiltered() {
@@ -172,6 +222,7 @@ function getFiltered() {
 }
 
 function renderGrades() {
+  renderHero();
   const filtered = getFiltered();
   const container = document.getElementById('grade-sections');
   const grades = activeGrade === 'ALL'
