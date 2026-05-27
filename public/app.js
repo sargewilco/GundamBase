@@ -187,7 +187,7 @@ function renderGrades() {
     const models = filtered.filter(m => m.grade === grade);
     if (!models.length) return '';
     return `
-      <section class="grade-section">
+      <section class="grade-section" data-grade="${grade}">
         <div class="grade-header">
           <span class="grade-badge badge-${grade}">${grade}</span>
           <span class="grade-title">${GRADE_LABELS[grade]}</span>
@@ -211,7 +211,7 @@ function renderCard(model) {
   const statusLabel = model.status === 'in-progress' ? 'In Progress'
     : model.status.charAt(0).toUpperCase() + model.status.slice(1);
   return `
-    <div class="model-card" data-id="${model.id}">
+    <div class="model-card" data-id="${model.id}" data-grade="${model.grade}">
       <div class="card-thumb">
         ${thumbHtml}
         ${photoCount > 0 ? `<span class="card-photo-count">📷 ${photoCount}</span>` : ''}
@@ -219,7 +219,7 @@ function renderCard(model) {
       <div class="card-body">
         <div class="card-name">${model.name}</div>
         <div class="card-series">${model.series}</div>
-        <span class="card-status ${statusClass}">${statusLabel}</span>
+        ${model.status !== 'backlog' ? `<span class="card-status ${statusClass}">${statusLabel}</span>` : ''}
       </div>
     </div>`;
 }

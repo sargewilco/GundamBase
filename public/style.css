@@ -321,7 +321,22 @@ main { max-width: 1400px; margin: 0 auto; padding: 1.5rem; }
 
 /* ── Grade Section ── */
 .grade-section { margin-bottom: 2.5rem; }
-.grade-header { display: flex; align-items: center; gap: 12px; margin-bottom: 1rem; }
+.grade-header {
+  display: flex; align-items: center; gap: 12px; margin-bottom: 1rem;
+  padding: 0.5rem 0.75rem;
+  border-radius: 0 8px 8px 0;
+  border-left: 3px solid transparent;
+  margin-left: -0.75rem;
+}
+
+/* Grade-themed section header accents */
+.grade-section[data-grade="PG"]    .grade-header { border-left-color: #f0b429; background: linear-gradient(90deg, rgba(240,180,41,0.08) 0%, transparent 65%); }
+.grade-section[data-grade="MG"]    .grade-header { border-left-color: #4f8ef7; background: linear-gradient(90deg, rgba(79,142,247,0.08)  0%, transparent 65%); }
+.grade-section[data-grade="RG"]    .grade-header { border-left-color: #3ecf8e; background: linear-gradient(90deg, rgba(62,207,142,0.08)  0%, transparent 65%); }
+.grade-section[data-grade="FM"]    .grade-header { border-left-color: #7c5ff7; background: linear-gradient(90deg, rgba(124,95,247,0.08)  0%, transparent 65%); }
+.grade-section[data-grade="HG"]    .grade-header { border-left-color: #f97316; background: linear-gradient(90deg, rgba(249,115,22,0.08)  0%, transparent 65%); }
+.grade-section[data-grade="EG"]    .grade-header { border-left-color: #ec4899; background: linear-gradient(90deg, rgba(236,72,153,0.08)  0%, transparent 65%); }
+.grade-section[data-grade="OTHER"] .grade-header { border-left-color: #8892a4; background: linear-gradient(90deg, rgba(136,146,164,0.06) 0%, transparent 65%); }
 .grade-badge {
   display: inline-flex;
   align-items: center;
@@ -371,11 +386,16 @@ main { max-width: 1400px; margin: 0 auto; padding: 1.5rem; }
   -webkit-tap-highlight-color: transparent;
   box-shadow: 0 0 28px rgba(79,142,247,0.07), 0 2px 8px rgba(0,0,0,0.35);
 }
-.model-card:hover {
-  transform: translateY(-3px);
-  border-color: var(--accent);
-  box-shadow: 0 0 60px rgba(79,142,247,0.38), 0 8px 32px rgba(79,142,247,0.25), 0 2px 8px rgba(0,0,0,0.4);
-}
+.model-card:hover { transform: translateY(-3px); }
+
+/* Grade-colored hover glow */
+.model-card[data-grade="PG"]:hover { border-color: #f0b429; box-shadow: 0 0 60px rgba(240,180,41,0.4),  0 8px 32px rgba(240,180,41,0.22), 0 2px 8px rgba(0,0,0,0.4); }
+.model-card[data-grade="MG"]:hover { border-color: #4f8ef7; box-shadow: 0 0 60px rgba(79,142,247,0.4),  0 8px 32px rgba(79,142,247,0.22),  0 2px 8px rgba(0,0,0,0.4); }
+.model-card[data-grade="RG"]:hover { border-color: #3ecf8e; box-shadow: 0 0 60px rgba(62,207,142,0.4),  0 8px 32px rgba(62,207,142,0.22),  0 2px 8px rgba(0,0,0,0.4); }
+.model-card[data-grade="FM"]:hover { border-color: #7c5ff7; box-shadow: 0 0 60px rgba(124,95,247,0.4),  0 8px 32px rgba(124,95,247,0.22),  0 2px 8px rgba(0,0,0,0.4); }
+.model-card[data-grade="HG"]:hover { border-color: #f97316; box-shadow: 0 0 60px rgba(249,115,22,0.4),  0 8px 32px rgba(249,115,22,0.22),  0 2px 8px rgba(0,0,0,0.4); }
+.model-card[data-grade="EG"]:hover { border-color: #ec4899; box-shadow: 0 0 60px rgba(236,72,153,0.4),  0 8px 32px rgba(236,72,153,0.22),  0 2px 8px rgba(0,0,0,0.4); }
+.model-card[data-grade="OTHER"]:hover { border-color: #8892a4; box-shadow: 0 0 60px rgba(136,146,164,0.3), 0 8px 32px rgba(136,146,164,0.15), 0 2px 8px rgba(0,0,0,0.4); }
 .card-thumb {
   width: 100%;
   aspect-ratio: 1;
