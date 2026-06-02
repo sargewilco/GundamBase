@@ -1,211 +1,151 @@
-# GundamBase — Agent Handoff & Progress Document
+# KitKeeper — Agent Memory & Directive
 
-> Use this file to orient yourself before touching the code. Read CLAUDE.md first for project structure, then use this document to understand what has been built, where things live, and what the active state of the codebase is.
+> Read this before touching any code. Then read `CLAUDE.md` for project structure.
+> This file is the source of truth for project state, conventions, and pending work.
 
 ---
 
-## Current Branch: `wishlist`
+## Active Branch: `wishlist`
 
-All recent work lives on the `wishlist` branch. It has not yet been merged to `master`. It is ahead of `origin/wishlist` by several commits and needs to be pushed and deployed.
+All work lives on `wishlist`. Not yet merged to `master`.
 
-**Deploy sequence:**
+**Deploy:**
 ```bash
-# Local
+# Local → GitHub
 git push origin wishlist
 
-# On server (BitwerksWeb2)
-git fetch origin
-git checkout wishlist
-pm2 restart gundambase
+# Server (BitwerksWeb2)
+git fetch origin && git checkout wishlist && pm2 restart gundambase
 ```
 
----
-
-## What Has Been Built (Session History)
-
-### 1. Claude Haiku Vision Scanner (replaces Ollama/moondream)
-- **Commit:** `08bfeb3`
-- **What:** Box photo scanning now uses `claude-haiku-4-5` via `@anthropic-ai/sdk` with `tool_use` (structured extraction). Replaced a local Ollama/moondream setup that was slow and often hallucinated RX-78-2 for every scan.
-- **Why tool_use:** `output_config.format` with `json_schema` silently drops the image when combined with vision in some SDK versions. `tool_use` with `tool_choice: { type: 'tool', name: '...' }` is reliable.
-- **Key file:** `server.js` — `POST /api/scan-box` (~line 330)
-- **Image size:** Resized to 1024×1024 before sending (was 512, bumped for better text recognition)
-- **HEIC support:** iPhones upload HEIC; converted to JPEG via `heic-convert` (pure JS, no system codec dependency) before passing to `sharp`
-
-### 2. Scan Console Animation
-- **Commit:** `807a801`, `aee1321`
-- **What:** Terminal-style animated overlay during scan — green monospace text, blinking cursor, progressive messages fading in.
-- **Key files:**
-  - `public/app.js` — `startScanConsole()`, `stopScanConsole()`, `SCAN_MESSAGES[]`
-  - `public/style.css` — `.scan-console`, `.scan-console-line`, `@keyframes scanLineFade`, `@keyframes scanBlink`
-- **Pattern:** `setInterval` stored in `window._scanInterval`; cleared in `resetScanSection()` and `stopScanConsole()`
-
-### 3. Wishlist Feature
-- **Commits:** `893c350`, `e515446`
-- **What:** Separate `/wishlist` page with priority tiers, source/retailer tracking, Claude Vision scanning, and a promote-to-inventory flow.
-
-#### Data
-- `data/wishlist.json` — array of wishlist items, same git-tracked pattern as `inventory.json`
-- Item schema:
-  ```json
-  {
-    "id": "wish-1234567890",
-    "grade": "MG",
-    "name": "Nu Gundam Ver.Ka",
-    "series": "Char's Counterattack",
-    "modelNumber": "RX-93",
-    "source": "Amazon",
-    "priority": "high",
-    "thumbnail": "/uploads/thumbnails/wish-xxx-auto.jpg",
-    "wikiTitle": "MG Nu Gundam Ver.Ka",
-    "notes": "",
-    "addedAt": "2026-04-30T..."
-  }
-  ```
-- Priority values: `"high"` | `"medium"` | `"low"`
-
-#### Server Routes (all in `server.js`)
-| Route | Purpose |
-|-------|---------|
-| `GET /wishlist` | Serves `public/wishlist.html` |
-| `GET /api/wishlist` | Returns all wishlist items |
-| `POST /api/wishlist` | Add item |
-| `PATCH /api/wishlist/:id` | Update item fields |
-| `DELETE /api/wishlist/:id` | Remove item + clean up thumbnail file |
-| `POST /api/wishlist/:id/upload/:type` | Upload thumbnail (reuses inventory multer middleware) |
-| `POST /api/wishlist/:id/fetch-image` | Auto-fetch wiki thumbnail (preserves custom photos) |
-| `POST /api/scan-wishlist` | Claude Vision scan — extracts name, grade, series, modelNumber, **and source/retailer** |
-
-#### Frontend Files
-- `public/wishlist.html` — page shell, add modal, item detail modal
-- `public/wishlist.js` — all wishlist logic (fetch, render, scan, promote, delete)
-
-#### Promote Flow (wishlist → inventory)
-1. User clicks "Promote to Inventory →" on a wishlist item detail modal
-2. Two-click confirm to prevent accidents
-3. On confirm: `DELETE /api/wishlist/:id`, then `sessionStorage.setItem('promoteKit', JSON.stringify({...}))`
-4. `window.location.href = '/'`
-5. `public/app.js` init checks sessionStorage on load — if `promoteKit` is found, opens the Add modal pre-filled with the kit data, then clears the key
-
-#### Navigation
-- **Desktop:** `"♡ Wishlist"` outlined button in collection page header (`.wishlist-nav-btn` class, hidden on mobile via media query)
-- **Mobile:** 4-tab bottom nav on collection page — Collection | + | Wishlist | Stats; wishlist tab is an `<a href="/wishlist">` link
-- **Wishlist page mobile nav:** 3 tabs — Collection (link back to `/`) | + | Wishlist (active)
-
-### 4. Gundam Wiki Link
-- **Commits:** `a36b0dd`, `d8aeed9`
-- **What:** Every kit detail modal now shows a link to the Gundam Fandom Wiki.
-- **Direct link:** Shown when `model.wikiTitle` is stored — `https://gundam.fandom.com/wiki/{wikiTitle}`
-- **Search fallback:** Shown for all other kits — `https://gundam.fandom.com/wiki/Special:Search?query={name}` — so every kit gets a usable link immediately
-- **Where `wikiTitle` is saved:** In `fetch-image` handlers (both inventory and wishlist), the wiki page title returned from the Fandom search API is saved to the model as `wikiTitle` before any image download occurs
-- **Thumbnail preservation:** `fetch-image` checks whether the existing thumbnail is a custom upload (filename does not contain `-auto.`). If so, it saves `wikiTitle` but skips the image download — the uploaded box photo is never overwritten.
+**Server:** `gundam.tomcannon.com` · nginx → localhost:3000 · PM2 manages Node process
+**Auth:** nginx basic auth on all POST/PATCH/DELETE routes automatically — no code changes needed for new write routes
+**API key:** `ANTHROPIC_API_KEY` in `ecosystem.config.js` (gitignored, chmod 600) injected by PM2
 
 ---
 
-## End-to-End Architecture
+## What Has Been Built
+
+### Core App (pre-session, on master)
+- Express + vanilla JS inventory manager, no build step
+- Kit data in `data/inventory.json`, uploads in `public/uploads/` (both gitignored on server, tracked in git locally)
+- Multer handles photo uploads → sharp converts to JPEG → stored in `public/uploads/thumbnails/` or `builds/`
+- Gundam Fandom Wiki API used to auto-fetch thumbnails and store `wikiTitle` on kits
+
+### Session Work (all on `wishlist` branch)
+
+**Claude Vision Scanner** (`08bfeb3`)
+- Replaced Ollama/moondream with `claude-haiku-4-5` via `@anthropic-ai/sdk`
+- Uses `tool_use` with `tool_choice: { type: 'tool', name: '...' }` — NOT `output_config.format`. Structured outputs + vision had a silent bug where the image was dropped.
+- Endpoint: `POST /api/scan-box` → `{ name, grade, series, modelNumber }`
+- HEIC → JPEG via `heic-convert` (pure JS) before sharp, because server libheif lacks HEVC codec
+
+**Scan Console Animation** (`807a801`)
+- Terminal-style green monospace overlay during scan
+- `startScanConsole()` / `stopScanConsole()` in `app.js`; `window._scanInterval` pattern
+- CSS: `.scan-console`, `@keyframes scanLineFade`, `@keyframes scanBlink` in `style.css`
+
+**Wishlist Feature** (`893c350`, `e515446`)
+- Separate page at `/wishlist` (Express route serves `wishlist.html`, not static)
+- Data: `data/wishlist.json` — items have `{ id, grade, name, series, modelNumber, source, priority, thumbnail, wikiTitle, notes, addedAt }`
+- Priority: `high` | `medium` | `low` with colored badge + glowing pip on card thumbnail
+- `POST /api/scan-wishlist` — same as scan-box but also extracts `source` (retailer)
+- Promote flow: DELETE wishlist item → `sessionStorage.setItem('promoteKit', JSON.stringify({...}))` → `window.location = '/'` → `app.js` init reads sessionStorage and pre-fills Add modal
+- Navigation: `♡ Wishlist` labeled button in desktop header (`.wishlist-nav-btn`); 4-tab mobile nav on collection page (Collection | + | Wishlist | Stats); 3-tab on wishlist page
+
+**Wiki Links** (`a36b0dd`, `d8aeed9`)
+- All kit modals show `↗ View on Gundam Wiki` (direct) or `↗ Search Gundam Wiki` (search fallback)
+- `wikiTitle` saved to model during `fetch-image`. If kit has a custom (non-auto) thumbnail, `fetch-image` saves `wikiTitle` only and skips image download — uploaded box photos are never overwritten
+- Detection: `thumbnail.includes('-auto.')` → auto-fetched; absence of `-auto.` → user upload
+
+**Visual Quick Wins** (`cf76feb`)
+- Backlog status badge hidden — only In Progress and Complete shown on cards
+- Grade-colored hover glow: `data-grade` attribute on `.model-card` → CSS `[data-grade="PG"]:hover` etc.
+- Grade section header accents: `data-grade` on `<section>` → colored left border + gradient fade
+
+**Hero Banner** (`ae19beb`)
+- Full-width featured card above grade sections for any `status === 'in-progress'` kit
+- Grade-tinted background, pulsing green dot, large image, "View Details →" opens modal
+- Filter-aware: hides when active filters exclude the in-progress kit
+- `renderHero()` called at top of `renderGrades()`; targets `#hero-section` div in HTML
+
+**SVG Favicon** (`78a7fea`)
+- `public/favicon.svg` — dark navy background, blue outlined hexagon (pointy-top, matches ⬡ logo)
+- Linked in both `index.html` and `wishlist.html`
+
+---
+
+## Pending Work
+
+### Sort Options (medium effort)
+Add a sort dropdown to the collection controls. Suggested options:
+- Default (grade order, then insertion)
+- A→Z name
+- Series
+- Date added (newest first)
+
+Implementation: add `let sortMode = 'default'` state variable; modify `getFiltered()` or add a sort step inside `renderGrades()`; add a `<select>` to `.controls` in `index.html`.
+
+### Stats Progress Bar (medium effort)
+Visual "X of N built" bar. Suggested placement: slim bar just above the grade sections, or replace the plain number stats in the header with a bar. Use the existing `--green` color and `progress-track`/`progress-fill` CSS classes already in `style.css`.
+
+### Scale Field (requires data model change — discuss before implementing)
+Adding 1/60, 1/100, 1/144 etc. per kit. Needs:
+- New `scale` field on inventory items (nullable string)
+- Add/Edit modal UI update
+- PATCH endpoint already allows new fields via the `allowed` array — just add `'scale'`
+- Existing records won't have it; handle gracefully with `|| ''`
+- **Do not implement without confirming the field name and display format with the user**
+
+---
+
+## Architecture at a Glance
 
 ```
-Browser
-  │
-  ├── GET /          → public/index.html  (collection page)
-  ├── GET /wishlist  → public/wishlist.html
-  ├── GET /kits      → AI-readable plain HTML inventory listing
-  │
-  ├── static assets served from public/
-  │     app.js, wishlist.js, style.css
-  │
-  └── API calls → Express (server.js, port 3000)
-                    │
-                    ├── JSON data: data/inventory.json, data/wishlist.json
-                    ├── Uploads:   public/uploads/thumbnails/, public/uploads/builds/
-                    ├── Claude API (Anthropic SDK) → scan-box, scan-wishlist
-                    └── Gundam Fandom Wiki API (HTTPS) → fetch-image endpoints
+public/index.html      → collection page shell
+public/wishlist.html   → wishlist page shell
+public/app.js          → all collection page logic (~650 lines)
+public/wishlist.js     → all wishlist page logic (~280 lines)
+public/style.css       → all styles, single file (~800 lines)
+server.js              → all Express routes (~530 lines)
+data/inventory.json    → kit records
+data/wishlist.json     → wishlist records
 ```
 
-**Production stack (BitwerksWeb2):**
-- nginx at `gundam.tomcannon.com` → reverse proxies to `localhost:3000`
-- PM2 manages the Node process (`pm2 restart gundambase`)
-- nginx basic auth on all non-GET routes (configured in `/etc/nginx/sites-enabled/gundam.conf`)
-- `ANTHROPIC_API_KEY` stored in `ecosystem.config.js` (gitignored, `chmod 600`) for PM2 env injection
+**server.js structure (top to bottom):**
+requires → constants (INVENTORY_PATH, WISHLIST_PATH, UPLOADS_DIR) → mkdir guards → middleware → multer → read/write helpers → module-level wiki helpers (wikiGet, downloadFile, toSearchQuery) → routes → app.listen
+
+**Key API routes:**
+- `GET/POST /api/inventory`, `PATCH/DELETE /api/inventory/:id`
+- `POST /api/inventory/:id/upload/:type` — type = `thumbnail` or `build`
+- `POST /api/inventory/:id/fetch-image` — wiki thumbnail (preserves custom uploads)
+- `POST /api/scan-box` — Claude Vision → kit fields
+- `GET/POST /api/wishlist`, `PATCH/DELETE /api/wishlist/:id`
+- `POST /api/wishlist/:id/fetch-image`
+- `POST /api/scan-wishlist` — Claude Vision → kit fields + source
 
 ---
 
-## Key Code Patterns
+## Conventions to Follow
 
-### server.js structure
+**Grade colors** (used in JS and CSS, keep in sync):
 ```
-requires → constants → mkdir guards → middleware → multer → 
-readInventory/writeInventory → readWishlist/writeWishlist →
-wikiGet() → downloadFile() → toSearchQuery() →   [module-level helpers, extracted for reuse across inventory + wishlist fetch-image routes]
-routes (inventory CRUD, wishlist CRUD, scan endpoints) → app.listen
+PG #f0b429  MG #4f8ef7  RG #3ecf8e  FM #7c5ff7  HG #f97316  EG #ec4899  OTHER #4a5568
 ```
 
-### Multer middleware reuse
-The single `upload` multer instance serves both inventory and wishlist uploads. The `destination` callback reads `req.params.type` (`'thumbnail'` → `thumbnails/`, else `builds/`). Wishlist uses route `/api/wishlist/:id/upload/:type` with type always `thumbnail`.
+**Grade-specific CSS** — use `[data-grade="XX"]` attribute selectors, not extra classes. Cards and sections both carry `data-grade`.
 
-### Grade badge classes
-Cards and modals use `grade-badge badge-${grade}` (e.g. `badge-MG`) for the styled gradient badges in the collection view. Wishlist cards use inline `style` with `GRADE_COLORS` values instead, plus `.wish-grade-badge` positioning class.
+**Claude scanning** — always use `tool_use` with `tool_choice: { type: 'tool', name: 'X' }`. Never use `output_config.format` with vision — the image gets silently dropped.
 
-### Priority system (wishlist only)
-- Values: `high` | `medium` | `low`
-- Card: small glowing `.priority-pip` dot (top-left of thumbnail) + `.priority-badge` text chip in card body
-- Colors defined in CSS: `.priority-high` (red), `.priority-medium` (gold), `.priority-low` (blue/accent)
+**Thumbnail lifecycle:**
+- User upload: filename pattern `{id}-{timestamp}.jpg` → never auto-delete
+- Wiki auto-fetch: filename pattern `{id}-auto.{ext}` → safe to replace on re-fetch
+- Check `thumbnail.includes('-auto.')` to distinguish
 
-### Status vs Priority
-- Inventory items have `status`: `backlog` | `in-progress` | `complete`
-- Wishlist items have `priority`: `high` | `medium` | `low`
-- These are entirely separate concepts on separate data stores
+**Multer reuse** — single `upload` instance serves both inventory and wishlist. Destination determined by `req.params.type` (`'thumbnail'` → thumbnails dir, else builds dir).
 
----
+**Mobile nav** — `.mobile-nav { display: none }` by default; shown only in `@media (max-width: 700px)`. All `icon-btn` elements hidden on mobile too.
 
-## Complete API Endpoint Reference
+**No build step** — vanilla JS, direct file edits, no transpilation. Keep it that way.
 
-### Inventory
-| Method | Path | Auth | Purpose |
-|--------|------|------|---------|
-| GET | `/api/inventory` | No | List all kits |
-| POST | `/api/inventory` | Yes (nginx) | Add kit |
-| PATCH | `/api/inventory/:id` | Yes | Update fields: `status, notes, name, series, modelNumber, grade` |
-| DELETE | `/api/inventory/:id` | Yes | Delete kit + files |
-| POST | `/api/inventory/:id/upload/:type` | Yes | Upload thumbnail or build photo |
-| POST | `/api/inventory/:id/fetch-image` | No | Wiki thumbnail fetch (saves wikiTitle, skips download if custom thumb) |
-| POST | `/api/scan-box` | No | Claude Vision scan → `{name, grade, series, modelNumber}` |
-
-### Wishlist
-| Method | Path | Auth | Purpose |
-|--------|------|------|---------|
-| GET | `/api/wishlist` | No | List all wishlist items |
-| POST | `/api/wishlist` | Yes | Add item |
-| PATCH | `/api/wishlist/:id` | Yes | Update fields: `priority, notes, name, series, modelNumber, grade, source` |
-| DELETE | `/api/wishlist/:id` | Yes | Remove item + thumbnail file |
-| POST | `/api/wishlist/:id/upload/:type` | Yes | Upload thumbnail |
-| POST | `/api/wishlist/:id/fetch-image` | No | Wiki thumbnail fetch (same preservation logic as inventory) |
-| POST | `/api/scan-wishlist` | No | Claude Vision scan → `{name, grade, series, modelNumber, source}` |
-
-### Pages
-| Method | Path | Purpose |
-|--------|------|---------|
-| GET | `/` | Collection page (index.html via static) |
-| GET | `/wishlist` | Wishlist page (explicit route, not static) |
-| GET | `/kits` | AI-readable plain HTML inventory |
-
----
-
-## Data File Locations
-
-| File | Purpose | Git-tracked |
-|------|---------|-------------|
-| `data/inventory.json` | All kit records | Yes |
-| `data/wishlist.json` | Wishlist items | Yes |
-| `public/uploads/thumbnails/` | Kit + wishlist thumbnails | No (gitignored) |
-| `public/uploads/builds/` | Build progress photos | No (gitignored) |
-| `ecosystem.config.js` | PM2 env (ANTHROPIC_API_KEY) | No (gitignored) |
-
----
-
-## Known Constraints
-
-- **Expo SDK 54 (mobile app):** Do NOT use `react-native-svg` or `expo-av`. Charts use pure RN flex layouts. Audio uses `expo-audio`.
-- **nginx `client_max_body_size 25M`:** Required for iPhone photo uploads. Do not reduce.
-- **HEIC conversion:** Done server-side with `heic-convert` (pure JS). The server's libheif lacks HEVC codec so system-level conversion is unavailable.
-- **Auth on write routes:** nginx basic auth protects POST/PATCH/DELETE. The mobile app injects credentials via AsyncStorage (`auth_credentials` key, base64). Any new write routes are automatically protected by nginx without code changes.
-- **`wikiTitle` population:** Existing kits that predate the wiki link feature won't have `wikiTitle` stored. The modal falls back to a wiki search URL for them. Clicking "Auto-fetch from wiki" on any kit will resolve and store the title (without overwriting a custom thumbnail).
+**Commit style** — descriptive subject line, bullet body explaining what and why. Always include `Co-Authored-By: Claude Sonnet 4.6 <noreply@anthropic.com>`.
