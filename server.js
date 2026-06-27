@@ -152,7 +152,7 @@ app.post('/api/inventory', (req, res) => {
   if (!grade || !name || !series) return res.status(400).json({ error: 'grade, name and series are required' });
   const inventory = readInventory();
   const id = `${grade.toLowerCase()}-${Date.now()}`;
-  const model = { id, grade, name, series, modelNumber: modelNumber || null, thumbnail: null, status: 'backlog', buildPhotos: [], notes: notes || '' };
+  const model = { id, grade, name, series, modelNumber: modelNumber || null, thumbnail: null, status: 'backlog', buildPhotos: [], notes: notes || '', addedAt: new Date().toISOString() };
   inventory.push(model);
   writeInventory(inventory);
   res.status(201).json(model);
