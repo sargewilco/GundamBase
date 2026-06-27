@@ -17,6 +17,14 @@ let searchQuery = '';
 let openModelId = null;
 let statsVisible = false;
 
+// Format an ISO date as "Mar 28, 2026"; returns '' if missing/invalid
+function formatAdded(iso) {
+  if (!iso) return '';
+  const d = new Date(iso);
+  if (isNaN(d)) return '';
+  return d.toLocaleDateString('en-US', { year: 'numeric', month: 'short', day: 'numeric' });
+}
+
 // ── Inventory ──
 
 async function fetchInventory() {
@@ -271,6 +279,7 @@ function renderCard(model) {
         <div class="card-name">${model.name}</div>
         <div class="card-series">${model.series}</div>
         ${model.status !== 'backlog' ? `<span class="card-status ${statusClass}">${statusLabel}</span>` : ''}
+        ${model.addedAt ? `<div class="card-added">Added ${formatAdded(model.addedAt)}</div>` : ''}
       </div>
     </div>`;
 }
@@ -325,6 +334,7 @@ function renderModal(model) {
             ${GRADE_ORDER.map(g => `<option value="${g}" ${model.grade===g?'selected':''}>${g} — ${GRADE_LABELS[g]}</option>`).join('')}
           </select>
         </div>
+        ${model.addedAt ? `<div class="modal-added">Added ${formatAdded(model.addedAt)}</div>` : ''}
         <div class="field-group">
           <label class="field-label">Name</label>
           <input class="notes-input" style="min-height:unset;padding:8px 12px;" id="edit-name" value="${model.name}" />

@@ -8,10 +8,12 @@
  * so the 13-digit millisecond timestamp in the filename is a durable record of
  * when the photo was uploaded — unlike file mtimes, which reset on checkout/copy.
  *
- * Files that DON'T carry a timestamp are skipped (left blank):
+ * Files that DON'T carry a timestamp get the EPOCH date below:
  *   - bulk-imported box photos:  `{id}-box.jpg`
  *   - wiki auto-fetched images:  `{id}-auto.{ext}`
- * These can't be reliably dated, so we don't guess.
+ *   - kits with no thumbnail at all
+ * These all came in with the initial collection upload, so we treat that
+ * upload day as the collection's "epoch" rather than leaving them blank.
  *
  * Kits that already have an `addedAt` are never overwritten.
  *
@@ -30,54 +32,52 @@ const INVENTORY_PATH = path.join(ROOT, 'data/inventory.json');
 
 const WRITE = process.argv.includes('--write');
 
+// The initial collection upload day. Kits without a recoverable upload
+// timestamp are assigned this date. (Determined from the bulk box-photo mtimes.)
+const EPOCH = '2026-03-28T00:00:00.000Z';
+
 // Match a 13-digit ms timestamp right before the file extension: `...-1774681657230.jpg`
 const TS_RE = /-(\d{13})\.[a-z0-9]+$/i;
 
 const inventory = JSON.parse(fs.readFileSync(INVENTORY_PATH, 'utf8'));
 
-const planned = [];   // { id, name, ts, iso }
-const skipped = [];   // { id, reason }
+const recovered = [];  // { id, name, iso }  — real date from filename
+const epoched = [];    // { id, name }       — assigned EPOCH
+const skipped = [];    // { id }             — already had addedAt
 
 for (const kit of inventory) {
   if (kit.addedAt) {
-    skipped.push({ id: kit.id, reason: 'already has addedAt' });
+    skipped.push({ id: kit.id });
     continue;
   }
-  if (!kit.thumbnail) {
-    skipped.push({ id: kit.id, reason: 'no thumbnail' });
-    continue;
-  }
-  const file = path.basename(kit.thumbnail);
+  const file = kit.thumbnail ? path.basename(kit.thumbnail) : '';
   const m = file.match(TS_RE);
-  if (!m) {
-    skipped.push({ id: kit.id, reason: `non-timestamped thumbnail (${file})` });
-    continue;
+  if (m) {
+    recovered.push({ id: kit.id, name: kit.name, iso: new Date(Number(m[1])).toISOString() });
+  } else {
+    epoched.push({ id: kit.id, name: kit.name });
   }
-  const ts = Number(m[1]);
-  const iso = new Date(ts).toISOString();
-  planned.push({ id: kit.id, name: kit.name, ts, iso });
 }
 
-planned.sort((a, b) => a.ts - b.ts);
+recovered.sort((a, b) => a.iso.localeCompare(b.iso));
+
+const planned = [
+  ...recovered,
+  ...epoched.map(e => ({ ...e, iso: EPOCH })),
+];
 
 console.log(`\nInventory: ${inventory.length} kits`);
-console.log(`Will set addedAt on: ${planned.length}`);
-console.log(`Skipped: ${skipped.length}\n`);
+console.log(`Recovered real dates from filenames: ${recovered.length}`);
+console.log(`Assigned epoch (${EPOCH.slice(0, 10)}): ${epoched.length}`);
+console.log(`Skipped (already had addedAt): ${skipped.length}\n`);
 
-if (planned.length) {
-  console.log('Planned updates (oldest → newest):');
-  for (const p of planned) {
+if (recovered.length) {
+  console.log('Recovered dates (oldest → newest):');
+  for (const p of recovered) {
     console.log(`  ${p.iso.slice(0, 10)}  ${p.id.padEnd(12)} ${p.name}`);
   }
+  console.log('');
 }
-
-// Summarize skip reasons so the dry run is easy to scan
-const reasonCounts = skipped.reduce((acc, s) => {
-  const key = s.reason.startsWith('non-timestamped') ? 'non-timestamped thumbnail' : s.reason;
-  acc[key] = (acc[key] || 0) + 1;
-  return acc;
-}, {});
-console.log('\nSkip reasons:', reasonCounts);
 
 if (!WRITE) {
   console.log('\nDry run — nothing written. Re-run with --write to apply.\n');
