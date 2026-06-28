@@ -23,6 +23,12 @@ const UPLOADS_DIR = path.join(__dirname, 'public', 'uploads');
 });
 
 app.use(express.json());
+
+// Uploaded images: cache for a week so repeat visits don't re-fetch them.
+// Filenames are unique per upload, so stale content isn't a concern.
+app.use('/uploads', express.static(UPLOADS_DIR, { maxAge: '7d' }));
+
+// App shell (html/js/css): default etag revalidation so deploys show immediately.
 app.use(express.static(path.join(__dirname, 'public')));
 
 // Multer storage — destination determined by fieldname
@@ -205,7 +211,7 @@ app.post('/api/inventory/:id/upload/:type', upload.single('photo'), async (req, 
     // Convert to JPEG so HEIC and other formats display in all browsers
     const jpegFilename = req.file.filename.replace(/\.[^.]+$/, '.jpg');
     const jpegPath = path.join(UPLOADS_DIR, subdir, jpegFilename);
-    await sharp(rawPath).jpeg({ quality: 88 }).toFile(jpegPath);
+    await sharp(rawPath).rotate().resize(1000, 1000, { fit: 'inside', withoutEnlargement: true }).jpeg({ quality: 82, mozjpeg: true }).toFile(jpegPath);
     if (rawPath !== jpegPath) fs.unlinkSync(rawPath);
 
     const filePath = `/uploads/${subdir}/${jpegFilename}`;
@@ -409,7 +415,7 @@ app.post('/api/wishlist/:id/upload/:type', upload.single('photo'), async (req, r
     const rawPath = req.file.path;
     const jpegFilename = req.file.filename.replace(/\.[^.]+$/, '.jpg');
     const jpegPath = path.join(UPLOADS_DIR, 'thumbnails', jpegFilename);
-    await sharp(rawPath).jpeg({ quality: 88 }).toFile(jpegPath);
+    await sharp(rawPath).rotate().resize(1000, 1000, { fit: 'inside', withoutEnlargement: true }).jpeg({ quality: 82, mozjpeg: true }).toFile(jpegPath);
     if (rawPath !== jpegPath) fs.unlinkSync(rawPath);
 
     const filePath = `/uploads/thumbnails/${jpegFilename}`;
