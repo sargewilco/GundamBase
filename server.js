@@ -32,6 +32,9 @@ app.use('/uploads', express.static(UPLOADS_DIR, { maxAge: '7d' }));
 // App shell (html/js/css): default etag revalidation so deploys show immediately.
 app.use(express.static(path.join(__dirname, 'public')));
 
+// Read-only MCP endpoint at POST /mcp — reuses readInventory() (hoisted below).
+registerMcp(app, readInventory);
+
 // Multer storage — destination determined by fieldname
 const storage = multer.diskStorage({
   destination: (req, file, cb) => {
