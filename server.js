@@ -6,6 +6,7 @@ const https = require('https');
 const sharp = require('sharp');
 const heicConvert = require('heic-convert');
 const Anthropic = require('@anthropic-ai/sdk');
+const { registerMcp } = require('./mcp');
 
 const anthropic = new Anthropic();
 
